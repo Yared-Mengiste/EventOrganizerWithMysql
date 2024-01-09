@@ -82,6 +82,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         } else if (e.getSource() == button1) {
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.setRowCount(0);
+//            removeAllComponents(panel);
         }
 
     }
@@ -106,5 +107,29 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+
+    /**
+     * removeAllComponents is used for removing all components from a given component you put in
+     * @param container is an object of the class that is used to get a container like jFrame, JPanel
+     */
+    private static void removeAllComponents(Container container) {
+        Component[] components = container.getComponents();
+        for (Component component : components) {
+            container.remove(component);
+        }
+        container.revalidate();
+        container.repaint();
+    }
+    /**
+     * removeAllComponents is used for removing all components from the extended JFrame container
+     * */
+    private void removeAllComponents() {
+        Component[] components = getContentPane().getComponents();
+        for (Component component : components) {
+            getContentPane().remove(component);
+        }
+        revalidate();
+        repaint();
     }
 }

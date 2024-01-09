@@ -1,10 +1,12 @@
 public class Staff extends Person {
     private String position;
 
+
     // Constructor
-    public Staff(String firstName, String lastName, String phoneNo1, String phoneNo2, String position) {
+    public Staff(String firstName, String lastName, String phoneNo1, String phoneNo2, String position, String databaseName
+    ,String password) {
         // Call the constructor of the superclass (Person)
-        super(firstName, lastName, phoneNo1, phoneNo2);
+        super(firstName, lastName, phoneNo1, phoneNo2, databaseName, password);
 
         // Set the position specific to the Staff class
         this.position = position;

@@ -90,7 +90,6 @@ public class MySqlConnector extends JFrame {
             System.out.println("success");
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle the exception accordingly (show message, log, etc.)
         }
     /*public void showTable(String query, JTable table) throws SQLException {
         Statement statement = conn.createStatement();
