@@ -66,10 +66,10 @@ public class Person extends MySqlConnector {
 
         try {
             pst = conn.prepareStatement("insert into " + tableName + "(firstName,lastName,phone1, phone2)values(?,?,?,?)");
-            pst.setString(2, firstName);
-            pst.setString(3, lastName);
-            pst.setString(4, phoneNo1);
-            pst.setString(5, phoneNo2);
+            pst.setString(1, firstName);
+            pst.setString(2, lastName);
+            pst.setString(2, phoneNo1);
+            pst.setString(4, phoneNo2);
             System.out.println("Added");
 
             pst.executeUpdate();
