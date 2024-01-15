@@ -91,25 +91,7 @@ public class MySqlConnector extends JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    /*public void showTable(String query, JTable table) throws SQLException {
-        Statement statement = conn.createStatement();
-        ResultSet rs = statement.executeQuery(query);
-        ResultSetMetaData resultSetMetaData = rs.getMetaData();
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        int columns = resultSetMetaData.getColumnCount();
-        String[] columnName = new String[columns];
-        for(int i = 0; i < columns; i++){
-            columnName[i] = resultSetMetaData.getColumnName(i + 1);
-        }
-        model.setColumnIdentifiers(columnName);
-        String[] rows = new String[columns];
-        while (rs.next()){
-            for (int j = 0; j < columns ; j++) {
-                rows[j] = rs.getString(j + 1);
-            }
-            model.addRow(rows);
-        }*/
-
+    
     }
 
 }
