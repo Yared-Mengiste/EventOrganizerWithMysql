@@ -91,7 +91,11 @@ public class MySqlConnector extends JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> c7f8d3a910cfc7c16acac240575345b4113046b5
     }
 
 }
