@@ -4,7 +4,8 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 
 /**
- * This class is used to connect to Mysql and help to retrieve and add data to the database
+ * This class is used to connect to Mysql and help to retrieve and add data to
+ * the database
  */
 public class MySqlConnector extends JFrame {
     protected String dataBaseName;
@@ -14,8 +15,11 @@ public class MySqlConnector extends JFrame {
 
     /**
      * this constructor accepts
-     * @param dataBaseName is a string data type that accepts the name of the dataBase you want to connect
-     * @param passWord is a string data type that accepts the password of the server
+     * 
+     * @param dataBaseName is a string data type that accepts the name of the
+     *                     dataBase you want to connect
+     * @param passWord     is a string data type that accepts the password of the
+     *                     server
      */
     public MySqlConnector(String dataBaseName, String passWord) {
         this.dataBaseName = dataBaseName;
@@ -38,15 +42,17 @@ public class MySqlConnector extends JFrame {
 
     /**
      *
-     * @param queries a String variable that accepts a query eg 'insert into java(id,fname,lname)values(?,?,?)'
-     * @param values is An array of String that accepts the values of the query's rows eg [1, 'Yared', 'Mengiste']
+     * @param queries a String variable that accepts a query eg 'insert into
+     *                java(id,fname,lname)values(?,?,?)'
+     * @param values  is An array of String that accepts the values of the query's
+     *                rows eg [1, 'Yared', 'Mengiste']
      */
     public void add(String queries, String[] values) {
 
         try {
             pst = conn.prepareStatement(queries);
-            for(int i = 0; i < values.length; i++)
-                pst.setString(i+1, values[i]);
+            for (int i = 0; i < values.length; i++)
+                pst.setString(i + 1, values[i]);
             System.out.println("Added");
 
             pst.executeUpdate();
@@ -57,7 +63,6 @@ public class MySqlConnector extends JFrame {
             e1.printStackTrace();
         }
 
-
     }
 
     /**
@@ -67,7 +72,7 @@ public class MySqlConnector extends JFrame {
      */
     public void showTable(String query, JTable table) {
         try (Statement statement = conn.createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
+                ResultSet rs = statement.executeQuery(query)) {
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.setRowCount(0);
 
@@ -91,11 +96,6 @@ public class MySqlConnector extends JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> c7f8d3a910cfc7c16acac240575345b4113046b5
     }
 
 }
