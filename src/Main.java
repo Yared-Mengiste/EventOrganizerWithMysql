@@ -8,13 +8,15 @@ import java.awt.event.KeyListener;
 import java.sql.SQLException;
 
 public class Main extends MySqlConnector implements ActionListener, KeyListener {
-    JTable table;
-    JTextArea text;
-    JButton button;
-    JButton button1;
-    JPanel panel;
-    GridBagConstraints con = new GridBagConstraints();
 
+    JTextField name;
+    JPasswordField signInPasswd;
+    JLabel nameL,signInL, signInPasswdL;
+    JButton signIn, signUp;
+    JPanel signInContainer;
+    GridBagConstraints constraint = new GridBagConstraints();
+    JMenuBar menuBar;
+    JMenuItem signInStaff, signInCustomer;
 
     /**
      * this constructor accepts
@@ -25,45 +27,106 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
      */
     public Main(String dataBaseName, String passWord) throws SQLException {
         super(dataBaseName, passWord);
-        panel = new JPanel();
-        panel.setBackground(Color.orange);
-        panel.setLayout(new GridBagLayout());
-        button = new JButton("Enter");
-        con.gridx = 1;
-        con.gridy = 1;
-        con.gridwidth = 1;
-        con.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(button, con);
-        button1 = new JButton("Clear");
-        con.gridx = 0;
-        con.gridy = 1;
-        con.gridwidth = 1;
-        con.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(button1, con);
-        text = new JTextArea("Enter query",1,30);
-        con.gridx = 0;
-        con.gridy = 0;
-        con.gridwidth = 2;
-        con.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(text, con);
-        text.setBorder(BorderFactory.createLineBorder(Color.green, 5));
-        text.addKeyListener(this);
-        button.addActionListener(this);
-        button1.addActionListener(this);
-        setSize(500, 500);
-
-        add(panel, BorderLayout.SOUTH);
-        table = new JTable();
-        showTable("select title, rating , CONCAT(first_name, ' ', last_name) as reviewer from reviews natural " +
-                "JOIN reviewers NATURAL JOIN series", table);
-        add(new JScrollPane(table));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
+        setExtendedState(MAXIMIZED_BOTH);
+        setTitle("Event Organizer");
+        getContentPane().setBackground(new Color(101, 1, 1, 255));
+        setMinimumSize(new Dimension(500, 500));
 
+        setVisible(true);
+    }
+
+    /**
+     * this is a method that is used to show signIn page of the customer side
+     */
+    public void signInGui(){
+        removeAllComponents();
+        setVisible(false);
+        setLayout(new GridBagLayout());
+
+        // menuBar
+        menuBar = new JMenuBar();
+        JMenu staffSignIn = new JMenu("Sign IN");
+        signInStaff = new JMenuItem("Staff SignIn");
+        signInCustomer = new JMenuItem("Customer SignIn");
+        staffSignIn.add(signInCustomer);
+        staffSignIn.add(signInStaff);
+        JMenu about = new JMenu("About");
+        menuBar.add(staffSignIn);
+        menuBar.add(about);
+        setJMenuBar(menuBar);
+
+        //signIn JPanel
+        signInContainer = new JPanel(new GridBagLayout());
+        signInContainer.setBackground(Color.orange);
+        signInContainer.setBorder(BorderFactory.createLineBorder(Color.orange, 10));
+        signInContainer.setSize(200, 400);
+        constraint = frameConstraint(3,1, 1, 1, 10);
+        add(signInContainer, constraint);
+
+        signInL = new JLabel("SignIN");
+        JLabel empty = new JLabel("                 ");
+        constraint = frameConstraint(2,0, 1, 1, 10);
+        signInContainer.add(empty, constraint);
+        signInL.setFont(new Font("Arial", Font.BOLD, 25));
+        constraint = frameConstraint(1,0,1,1, 10);
+        signInContainer.add(signInL, constraint);
+
+        nameL = new JLabel("  User Name");
+        nameL.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,1, 1, 1, 10);
+        signInContainer.add(nameL, constraint);
+
+        name = new JTextField(25);
+        name.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,2, 2, 1, 10);
+        signInContainer.add(name, constraint);
+
+        signInL = new JLabel("SignIN");
+        constraint = frameConstraint(2,0, 1, 1, 10);
+        signInContainer.add(empty, constraint);
+        signInPasswdL = new JLabel("  Password");
+        signInPasswdL.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,4, 1, 1, 10);
+        signInContainer.add(signInPasswdL, constraint);
+
+        signInPasswd = new JPasswordField(25);
+        signInPasswd.setEchoChar('*');
+        setFont(new Font("Arial", Font.BOLD, 15));
+        signInPasswd.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,5, 2, 1, 10);
+        signInContainer.add(signInPasswd, constraint);
+
+        JLabel empty1 = new JLabel(".");
+        constraint = frameConstraint(0,6,1,1, 0);
+        signInContainer.add(empty1, constraint);
+        //signIn JButton
+        signIn = new JButton("Sign In");
+        signIn.setFocusable(false);
+        signIn.setFont(new Font("Arial", Font.BOLD, 15));
+        signIn.setForeground(Color.white);
+        signIn.setBackground(new Color(12,100, 255));
+        constraint = frameConstraint(1,7,1,1, 0);
+        signInContainer.add(signIn, constraint);
+
+        JLabel empty2 = new JLabel(".");
+        constraint = frameConstraint(0,8,1,1, 0);
+        signInContainer.add(empty2, constraint);
+        //signUp JButton
+        signUp = new JButton("Sign Up");
+        signUp.setFont(new Font("Arial", Font.BOLD, 15));
+        signUp.setForeground(Color.white);
+        signUp.setBackground(new Color(12,100, 255));
+        signUp.setFocusable(false);
+        constraint = frameConstraint(1,9,1,1, 0);
+        signInContainer.add(signUp, constraint);
+
+        setVisible(true);
     }
     public static void main(String[] arr){
         try {
-            new Main("book_shop", "PHW#84#joer");
+            Main m = new Main("book_shop", "PHW#84#joer");
+            m.signInGui();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -72,18 +135,6 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == button)
-        {
-            String queries = text.getText();
-            text.setText("");
-            System.out.println(queries);
-            showTable(queries, table);
-
-        } else if (e.getSource() == button1) {
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            model.setRowCount(0);
-//            removeAllComponents(panel);
-        }
 
     }
 
@@ -94,13 +145,6 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER)
-        {
-            String queries = text.getText();
-            System.out.println(queries);
-            showTable(queries, table);
-
-        }
 
     }
 
@@ -131,5 +175,22 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         }
         revalidate();
         repaint();
+    }
+    /**
+     * set a given component a position
+     * @param x set column of the gridBag layout
+     * @param y set row of the gridBag layout
+     * @param width set how many column will it take
+     * @param height set how many rows will it take
+     * @return Constraint type object
+     */
+    public GridBagConstraints frameConstraint(int x, int y, int width, int height, int ipady){
+        GridBagConstraints temp = new GridBagConstraints();
+        temp.gridx = x;
+        temp.gridy = y;
+        temp.gridwidth = width;
+        temp.gridheight = height;
+        temp.ipady =ipady;
+        return temp;
     }
 }
