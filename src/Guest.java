@@ -13,10 +13,10 @@ public class Guest extends Person{
             ,String password) {
         super(firstName, lastName, phoneNo1, "0", databaseName,"", password);
     }
-    public void add(String tableName) {
+    public void add() {
 
         try {
-            pst = conn.prepareStatement("insert into " + tableName + "(first_name,last_name,tellNo)values(?,?,?,?,?)");
+            pst = conn.prepareStatement("insert into Guest (first_name,last_name,tellNo)values(?,?,?,?,?)");
             pst.setString(1, firstName);
             pst.setString(2, lastName);
             pst.setString(4, phoneNo1);

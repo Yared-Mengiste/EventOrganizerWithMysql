@@ -17,10 +17,10 @@ public class Customer extends Person{
         this.pwd = pwd;
     }
 
-    public void add(String tableName) {
+    public void add() {
 
         try {
-            pst = conn.prepareStatement("insert into " + tableName + "(first_name,last_name,password ,tellNo1, tellNo2)values(?,?,?,?,?)");
+            pst = conn.prepareStatement("insert into Staff(first_name,last_name,password ,tellNo1, tellNo2)values(?,?,?,?,?)");
             pst.setString(1, firstName);
             pst.setString(2, lastName);
             pst.setString(4, phoneNo1);
