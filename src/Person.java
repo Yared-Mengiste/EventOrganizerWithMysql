@@ -38,6 +38,9 @@ public class Person extends MySqlConnector {
         this.phoneNo1 = phoneNo1;
     }
 
+    public void setPhoneNo2(String phoneNo2) {
+        this.phoneNo2 = phoneNo2;
+    }
 
     public void setSex(String  sex) {
         this.sex = sex;
@@ -58,23 +61,13 @@ public class Person extends MySqlConnector {
         return phoneNo1;
     }
 
+    public String getPhoneNo2() {
+        return phoneNo2;
+    }
+
     /**
      * this function is used to add an object to a table within a given database
      * @param tableName is string parameter used to specify the tables name which we inset to
      */
-    public void add(String tableName) {
 
-        try {
-            pst = conn.prepareStatement("insert into " + tableName + "(first_name,last_name,tellNo)values(?,?,?,?,?)");
-            pst.setString(1, firstName);
-            pst.setString(2, lastName);
-            pst.setString(4, phoneNo1);
-            System.out.println("Added");
-
-            pst.executeUpdate();
-        } catch (SQLException e1) {
-
-            e1.printStackTrace();
-        }
-    }
 }
