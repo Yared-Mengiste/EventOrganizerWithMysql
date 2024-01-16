@@ -9,14 +9,20 @@ import java.sql.SQLException;
 
 public class Main extends MySqlConnector implements ActionListener, KeyListener {
 
-    JTextField name;
-    JPasswordField signInPasswd;
-    JLabel nameL,signInL, signInPasswdL;
-    JButton signIn, signUp;
-    JPanel signInContainer;
-    GridBagConstraints constraint = new GridBagConstraints();
-    JMenuBar menuBar;
-    JMenuItem signInStaff, signInCustomer;
+    protected JTextField name;
+    protected JPasswordField signInPasswd;
+    protected JLabel nameL,signInL, signInPasswdL;
+    protected JButton signIn, signUp;
+    protected JPanel signInContainer;
+    protected GridBagConstraints constraint = new GridBagConstraints();
+    protected JMenuBar menuBar;
+    protected JMenuItem signInStaff, signInCustomer;
+    protected JTextField staffName;
+    protected JPasswordField staffSignInPasswd;
+    protected JLabel staffNameL, staffSignInL, staffSignInPasswdL;
+    protected JButton StaffSignIn;
+    protected JPanel staffSignInContainer;
+
 
     /**
      * this constructor accepts
@@ -123,10 +129,90 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
         setVisible(true);
     }
+
+    /**
+     * this method is used to Staff sign in
+     */
+    public void staffSignInGui(){
+        removeAllComponents();
+        setVisible(false);
+        setLayout(new GridBagLayout());
+
+        // menuBar
+        menuBar = new JMenuBar();
+        JMenu staffSignIn = new JMenu("Sign IN");
+        signInStaff = new JMenuItem("Staff SignIn");
+        signInCustomer = new JMenuItem("Customer SignIn");
+        staffSignIn.add(signInCustomer);
+        staffSignIn.add(signInStaff);
+        JMenu about = new JMenu("About");
+        menuBar.add(staffSignIn);
+        menuBar.add(about);
+        setJMenuBar(menuBar);
+
+        //signIn JPanel
+        staffSignInContainer = new JPanel(new GridBagLayout());
+        staffSignInContainer.setBackground(Color.orange);
+        staffSignInContainer.setBorder(BorderFactory.createLineBorder(Color.orange, 10));
+        staffSignInContainer.setSize(200, 400);
+        constraint = frameConstraint(3,1, 1, 1, 10);
+        add(staffSignInContainer, constraint);
+
+        staffSignInL = new JLabel("       Staff SignIN");
+        JLabel empty = new JLabel("                 ");
+        constraint = frameConstraint(2,0, 1, 1, 10);
+        staffSignInContainer.add(empty, constraint);
+        staffSignInL.setFont(new Font("Arial", Font.BOLD, 25));
+        constraint = frameConstraint(0,0,2,1, 10);
+        staffSignInContainer.add(staffSignInL, constraint);
+
+        staffNameL = new JLabel("  Staff Name");
+        staffNameL.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,1, 1, 1, 10);
+        staffSignInContainer.add(staffNameL, constraint);
+
+        staffName = new JTextField(25);
+        staffName.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,2, 2, 1, 10);
+        staffSignInContainer.add(staffName, constraint);
+
+        staffSignInL = new JLabel("SignIN");
+        constraint = frameConstraint(2,0, 1, 1, 10);
+        staffSignInContainer.add(empty, constraint);
+        staffSignInPasswdL = new JLabel("  Password");
+        staffSignInPasswdL.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,4, 1, 1, 10);
+        staffSignInContainer.add(staffSignInPasswdL, constraint);
+
+        staffSignInPasswd = new JPasswordField(25);
+        staffSignInPasswd.setEchoChar('*');
+        setFont(new Font("Arial", Font.BOLD, 15));
+        staffSignInPasswd.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,5, 2, 1, 10);
+        staffSignInContainer.add(staffSignInPasswd, constraint);
+
+        JLabel empty1 = new JLabel(".");
+        constraint = frameConstraint(0,6,1,1, 0);
+        staffSignInContainer.add(empty1, constraint);
+        //signIn JButton
+        StaffSignIn = new JButton("Sign In");
+        StaffSignIn.setFocusable(false);
+        StaffSignIn.setFont(new Font("Arial", Font.BOLD, 15));
+        StaffSignIn.setForeground(Color.white);
+        StaffSignIn.setBackground(new Color(12,100, 255));
+        constraint = frameConstraint(1,7,1,1, 0);
+        staffSignInContainer.add(StaffSignIn, constraint);
+
+        JLabel empty2 = new JLabel(".");
+        constraint = frameConstraint(0,8,1,1, 0);
+        staffSignInContainer.add(empty2, constraint);
+        //signUp JButton
+        setVisible(true);
+    }
     public static void main(String[] arr){
         try {
             Main m = new Main("book_shop", "PHW#84#joer");
-            m.signInGui();
+            m.staffSignInGui();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
