@@ -8,21 +8,22 @@ public class Person extends MySqlConnector {
     protected String lastName;
     protected String phoneNo1;
     protected String phoneNo2;
+    protected String sex;
 
     /**
      * person is used to initialize
-     *
      * @param firstName is used to initialize firstName
      * @param lastName  is used to initialize lastName
      * @param phoneNo1  is used to initialize phoneNo1
      * @param phoneNo2  is used to initialize phoneNo2
      */
-    public Person(String firstName, String lastName, String phoneNo1, String phoneNo2, String databaseName, String password) {
+    public Person(String firstName, String lastName, String phoneNo1, String phoneNo2, String databaseName,String sex, String password) {
         super(databaseName, password);
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNo1 = phoneNo1;
         this.phoneNo2 = phoneNo2;
+        this.sex = sex;
     }
 
     public void setFirstName(String firstName) {
@@ -37,11 +38,14 @@ public class Person extends MySqlConnector {
         this.phoneNo1 = phoneNo1;
     }
 
-    public void setPhoneNo2(String phoneNo2) {
-        this.phoneNo2 = phoneNo2;
+
+    public void setSex(String  sex) {
+        this.sex = sex;
     }
 
-    // Getter methods
+    public String getSex() {
+        return sex;
+    }
     public String getFirstName() {
         return firstName;
     }
@@ -54,10 +58,6 @@ public class Person extends MySqlConnector {
         return phoneNo1;
     }
 
-    public String getPhoneNo2() {
-        return phoneNo2;
-    }
-
     /**
      * this function is used to add an object to a table within a given database
      * @param tableName is string parameter used to specify the tables name which we inset to
@@ -65,11 +65,10 @@ public class Person extends MySqlConnector {
     public void add(String tableName) {
 
         try {
-            pst = conn.prepareStatement("insert into " + tableName + "(firstName,lastName,phone1, phone2)values(?,?,?,?)");
+            pst = conn.prepareStatement("insert into " + tableName + "(first_name,last_name,tellNo)values(?,?,?,?,?)");
             pst.setString(1, firstName);
             pst.setString(2, lastName);
-            pst.setString(2, phoneNo1);
-            pst.setString(4, phoneNo2);
+            pst.setString(4, phoneNo1);
             System.out.println("Added");
 
             pst.executeUpdate();
