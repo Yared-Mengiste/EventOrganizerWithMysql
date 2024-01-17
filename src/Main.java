@@ -9,14 +9,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Main extends MySqlConnector implements ActionListener, KeyListener {
+
+    protected JTextField signUpName;
+    protected JPasswordField signUpPasswd, confirm;
+    protected JLabel signUpNameL, signUpPasswdL, confirmL,messageLabel ;
+    protected JButton signIn, signUp;
+    protected JPanel signInContainer;
+    protected GridBagConstraints constraint = new GridBagConstraints();
     protected JTextField name;
     protected Customer customer;
     protected Staff staff;
     protected JPasswordField signInPasswd;
     protected JLabel nameL,signInL, signInPasswdL;
-    protected JButton signIn, signUp;
-    protected JPanel signInContainer;
-    protected GridBagConstraints constraint = new GridBagConstraints();
     protected JMenuBar menuBar;
     protected JMenuItem signInStaff, signInCustomer;
     protected JTextField staffName;
@@ -238,6 +242,105 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
+    public void signUpGui(){
+        removeAllComponents();
+        setVisible(false);
+        setLayout(new GridBagLayout());
+
+        // menuBar
+        menuBar = new JMenuBar();
+        JMenu staffSignIn = new JMenu("Sign IN");
+
+        signInStaff = new JMenuItem("Staff SignIn");
+        staffSignIn.add(signInStaff);
+        signInStaff.addActionListener(this);
+
+        signInCustomer = new JMenuItem("Customer SignIn");
+        signInCustomer.addActionListener(this);
+        staffSignIn.add(signInCustomer);
+
+        JMenu about = new JMenu("About");
+        menuBar.add(staffSignIn);
+        menuBar.add(about);
+        setJMenuBar(menuBar);
+
+        //signIn JPanel
+        signInContainer = new JPanel(new GridBagLayout());
+        signInContainer.setBackground(Color.orange);
+        signInContainer.setBorder(BorderFactory.createLineBorder(Color.orange, 10));
+        signInContainer.setSize(200, 400);
+        constraint = frameConstraint(3,1, 1, 1, 10);
+        add(signInContainer, constraint);
+
+        signInL = new JLabel("SignUp");
+        JLabel empty = new JLabel("                 ");
+        constraint = frameConstraint(2,0, 1, 1, 10);
+        signInContainer.add(empty, constraint);
+        signInL.setFont(new Font("Arial", Font.BOLD, 25));
+        constraint = frameConstraint(1,0,1,1, 10);
+        signInContainer.add(signInL, constraint);
+
+        signUpNameL = new JLabel("  User Name");
+        signUpNameL.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,1, 1, 1, 10);
+        signInContainer.add(signUpNameL, constraint);
+
+        signUpName = new JTextField(25);
+        signUpName.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,2, 2, 1, 10);
+        signInContainer.add(signUpName, constraint);
+
+//        signInL = new JLabel("SignUN");
+        constraint = frameConstraint(2,0, 1, 1, 10);
+        signInContainer.add(empty, constraint);
+        signUpPasswdL = new JLabel("  Password");
+        signUpPasswdL.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,4, 1, 1, 10);
+        signInContainer.add(signUpPasswdL, constraint);
+
+        signUpPasswd = new JPasswordField(25);
+        signUpPasswd.setEchoChar('*');
+        setFont(new Font("Arial", Font.BOLD, 15));
+        signUpPasswd.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,5, 2, 1, 10);
+        signInContainer.add(signUpPasswd, constraint);
+
+        JLabel empty1 = new JLabel(".");
+        constraint = frameConstraint(0,6,1,1, 0);
+        signInContainer.add(empty1, constraint);
+        //signIn JButton
+        confirmL = new JLabel("Confirm");
+        confirmL.setFocusable(false);
+        confirmL.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,7,1,1, 0);
+        signInContainer.add(confirmL, constraint);
+
+        confirm = new JPasswordField(25);
+        confirm.setEchoChar('*');
+        confirm.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,8,2,1, 10);
+        signInContainer.add(confirm, constraint);
+
+        messageLabel = new JLabel("");
+        messageLabel.setForeground(Color.RED);
+        constraint = frameConstraint(0, 11, 2, 1, 10);
+        signInContainer.add(messageLabel, constraint);
+
+        JLabel empty2 = new JLabel(".");
+        constraint = frameConstraint(0,9,1,1, 0);
+        signInContainer.add(empty2, constraint);
+        //signUp JButton
+        signUp = new JButton("Sign Up");
+        signUp.setFont(new Font("Arial", Font.BOLD, 15));
+        signUp.setForeground(Color.white);
+        signUp.setBackground(new Color(12,100, 255));
+        signUp.setFocusable(false);
+        constraint = frameConstraint(1,10,1,1, 0);
+        signInContainer.add(signUp, constraint);
+
+        setVisible(true);
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -371,6 +474,8 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                 }
             }
 
+        } else if (e.getSource() == signUp) {
+            signUpGui();
         }
 
     }
@@ -436,5 +541,8 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
             }
 
         return false;
+    }
+    protected boolean checkPasswordMatch(char[] password, char[] confirmPassword) {
+        return new String(password).equals(new String(confirmPassword));
     }
 }
