@@ -1,26 +1,41 @@
-import java.sql.SQLException;
+import java.sql.*;
 
 
 public class Staff extends Person {
-    private int position;
     private String DOB;
     private int supervisorId;
     private String pwd;
     private int positionId;
 
 
-    // Constructor
-    public Staff(String firstName, String lastName, String phoneNo1, String phoneNo2, String sex, int position,
-                 String databaseName,String DOB, String password,String pwd, int supervisorId, int positionId) {
-        // Call the constructor of the superclass (Person)
+    public Staff(String firstName, String lastName, String phoneNo1, String phoneNo2, String sex,String databaseName
+            ,String DOB, String password,String pwd, int supervisorId, int positionId) {
         super(firstName, lastName, phoneNo1, phoneNo2, databaseName, sex, password);
 
-        // Set the position specific to the Staff class
-        this.position = position;
         this.DOB = DOB;
         this.supervisorId = supervisorId;
         this.pwd = pwd;
         this.positionId = positionId;
+    }
+    public static ResultSet getStaff(String fName, String lName, String password, String dataBaseName, String passWord) throws SQLException {
+        String sql = "SELECT * FROM staff WHERE first_name = ? AND last_name = ? AND password = ?";
+        ResultSet result = null;
+        Connection conn1 = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
+                passWord);
+
+        try {
+
+            PreparedStatement pst = conn1.prepareStatement(sql);
+            pst.setString(1, fName);
+            pst.setString(2, lName);
+            pst.setString(3, password);
+
+            result = pst.executeQuery();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public void addStaff() {
@@ -46,16 +61,6 @@ public class Staff extends Person {
             e.printStackTrace();
         }
     }
-
-        // Setter method for position
-        public void setPosition ( int position){
-            this.position = position;
-        }
-
-        // Getter method for position
-        public int getPosition () {
-            return position;
-        }
     public void setDOB(String DOB) {
         this.DOB = DOB;
     }

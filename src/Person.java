@@ -4,6 +4,7 @@ import java.sql.SQLException;
  * class person is used as a parent class for all other classes
  */
 public class Person extends MySqlConnector {
+    protected int id;
     protected String firstName;
     protected String lastName;
     protected String phoneNo1;
@@ -65,9 +66,11 @@ public class Person extends MySqlConnector {
         return phoneNo2;
     }
 
-    /**
-     * this function is used to add an object to a table within a given database
-     * @param tableName is string parameter used to specify the tables name which we inset to
-     */
+    public void setId(int id){this.id = id;}
+
+    public int getId() {
+        return id;
+    }
+
 
 }
