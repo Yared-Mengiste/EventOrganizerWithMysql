@@ -10,10 +10,10 @@ import java.util.ArrayList;
 
 public class Main extends MySqlConnector implements ActionListener, KeyListener {
 
-    protected JTextField signUpName;
+    protected JTextField signUpName, tellNoo1, tellNoo2;
     protected JPasswordField signUpPasswd, confirm;
-    protected JLabel signUpNameL, signUpPasswdL, confirmL,messageLabel ;
-    protected JButton signIn, signUp;
+    protected JLabel signUpNameL, signUpPasswdL, confirmL,messageLabel, tellNo1L, tellNo2L ;
+    protected JButton signIn, signUp, signUpIn;
     protected JPanel signInContainer;
     protected GridBagConstraints constraint = new GridBagConstraints();
     protected JTextField name;
@@ -28,7 +28,8 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     protected JLabel staffNameL, staffSignInL, staffSignInPasswdL;
     protected JButton staffSignIn;
     protected JPanel staffSignInContainer;
-
+    protected JRadioButton male,female;
+    protected ButtonGroup group;
 
     /**
      * this constructor accepts
@@ -286,57 +287,98 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         signInContainer.add(signUpNameL, constraint);
 
         signUpName = new JTextField(25);
+        signUpName.setText("userName fatherName");
         signUpName.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,2, 2, 1, 10);
         signInContainer.add(signUpName, constraint);
 
+        tellNo1L = new JLabel("  Phone 1");
+        tellNo1L.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,3, 1, 1, 10);
+        signInContainer.add(tellNo1L, constraint);
+
+        tellNoo1 = new JTextField(25);
+        tellNoo1.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,4, 2, 1, 10);
+        signInContainer.add(tellNoo1, constraint);
+
+        tellNo2L = new JLabel("  Phone 2");
+        tellNo2L.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,5, 1, 1, 10);
+        signInContainer.add(tellNo2L, constraint);
+
+        tellNoo2 = new JTextField(25);
+        tellNoo2.setFont(new Font("Arial", Font.BOLD, 15));
+        constraint = frameConstraint(0,6, 2, 1, 10);
+        signInContainer.add(tellNoo2, constraint);
+
 //        signInL = new JLabel("SignUN");
         constraint = frameConstraint(2,0, 1, 1, 10);
         signInContainer.add(empty, constraint);
+
         signUpPasswdL = new JLabel("  Password");
         signUpPasswdL.setFont(new Font("Arial", Font.BOLD, 15));
-        constraint = frameConstraint(0,4, 1, 1, 10);
+        constraint = frameConstraint(0,7, 1, 1, 10);
         signInContainer.add(signUpPasswdL, constraint);
 
         signUpPasswd = new JPasswordField(25);
         signUpPasswd.setEchoChar('*');
         setFont(new Font("Arial", Font.BOLD, 15));
         signUpPasswd.setFont(new Font("Arial", Font.BOLD, 15));
-        constraint = frameConstraint(0,5, 2, 1, 10);
+        constraint = frameConstraint(0,8, 2, 1, 10);
         signInContainer.add(signUpPasswd, constraint);
 
         JLabel empty1 = new JLabel(".");
-        constraint = frameConstraint(0,6,1,1, 0);
+        constraint = frameConstraint(0,9,1,1, 0);
         signInContainer.add(empty1, constraint);
         //signIn JButton
         confirmL = new JLabel("Confirm");
         confirmL.setFocusable(false);
         confirmL.setFont(new Font("Arial", Font.BOLD, 15));
-        constraint = frameConstraint(0,7,1,1, 0);
+        constraint = frameConstraint(0,10,1,1, 0);
         signInContainer.add(confirmL, constraint);
 
         confirm = new JPasswordField(25);
         confirm.setEchoChar('*');
         confirm.setFont(new Font("Arial", Font.BOLD, 15));
-        constraint = frameConstraint(0,8,2,1, 10);
+        constraint = frameConstraint(0,11,2,1, 10);
         signInContainer.add(confirm, constraint);
+
+        group = new ButtonGroup();
+        male = new JRadioButton("Male");
+        male.setFocusable(false);
+        male.setSelected(true);
+        male.setBackground(Color.ORANGE);
+        group.add(male);
+        constraint = frameConstraint(0,12, 1, 1, 10);
+        signInContainer.add(male, constraint);
+
+        female = new JRadioButton("Female");
+        group.add(female);
+        female.setFocusable(false);
+        female.setBackground(Color.orange);
+        constraint = frameConstraint(1,12, 1, 1, 10);
+        signInContainer.add(female, constraint);
+
+
 
         messageLabel = new JLabel("");
         messageLabel.setForeground(Color.RED);
-        constraint = frameConstraint(0, 11, 2, 1, 10);
+        constraint = frameConstraint(0, 15, 2, 1, 10);
         signInContainer.add(messageLabel, constraint);
 
         JLabel empty2 = new JLabel(".");
-        constraint = frameConstraint(0,9,1,1, 0);
+        constraint = frameConstraint(0,13,1,1, 0);
         signInContainer.add(empty2, constraint);
         //signUp JButton
-        signUp = new JButton("Sign Up");
-        signUp.setFont(new Font("Arial", Font.BOLD, 15));
-        signUp.setForeground(Color.white);
-        signUp.setBackground(new Color(12,100, 255));
-        signUp.setFocusable(false);
-        constraint = frameConstraint(1,10,1,1, 0);
-        signInContainer.add(signUp, constraint);
+        signUpIn = new JButton("Sign Up");
+        signUpIn.addActionListener(this);
+        signUpIn.setFont(new Font("Arial", Font.BOLD, 15));
+        signUpIn.setForeground(Color.white);
+        signUpIn.setBackground(new Color(12,100, 255));
+        signUpIn.setFocusable(false);
+        constraint = frameConstraint(1,14,1,1, 0);
+        signInContainer.add(signUpIn, constraint);
 
         setVisible(true);
     }
@@ -362,7 +404,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
             staffSignInGui();
         } else if (e.getSource() == signInCustomer) {
             signInGui();
-        } else if (e.getSource() == signIn) {
+        } /*else if (e.getSource() == signIn) {
             String fullName, fName, lName, userPassword, phoneNo1, phoneNo2;
             int id;
             ResultSet resultSet = null;
@@ -386,7 +428,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                         phoneNo1 = resultSet.getString(4);
                         phoneNo2 = resultSet.getString(5);
                         id = resultSet.getInt(1);
-                        customer = new Customer(fName, lName, phoneNo1, phoneNo2, dataBaseName, passWord, userPassword);
+                        customer = new Customer(fName, lName, phoneNo1, phoneNo2, dataBaseName, passWord, userPassword, sex);
                         customer.setId(id);
                         name.setText(customer.getFirstName());
 
@@ -396,8 +438,8 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                 }
             }
 
-        } else if (e.getSource() == signIn) {
-            String fullName, fName, lName, userPassword, phoneNo1, phoneNo2;
+        } */else if (e.getSource() == signIn) {
+            String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, sex;
             int id;
             ResultSet resultSet;
             fullName = name.getText();
@@ -421,12 +463,13 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                         name.setText("Incorrect Customer name or password");
                         signInPasswd.setText("");
                     } else {
-                        phoneNo1 = resultSet.getString(4);
-                        phoneNo2 = resultSet.getString(5);
-                        id = resultSet.getInt(1);
-                        customer = new Customer(fName, lName, phoneNo1, phoneNo2, dataBaseName, passWord, userPassword);
+                        sex = resultSet.getString("sex");
+                        phoneNo1 = resultSet.getString("tellNo1");
+                        phoneNo2 = resultSet.getString("tellNo2");
+                        id = resultSet.getInt("id");
+                        customer = new Customer(fName, lName, phoneNo1, phoneNo2, dataBaseName, passWord, userPassword, sex);
                         customer.setId(id);
-                        name.setText(customer.getFirstName());
+                        name.setText(customer.getSex());
                     }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
@@ -476,6 +519,38 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
         } else if (e.getSource() == signUp) {
             signUpGui();
+        } else if(e.getSource() == signUpIn){
+            if(checkPasswordMatch(signUpPasswd.getPassword() , confirm.getPassword()))
+                    if (signUpPasswd.getPassword().length > 3)
+                        if(checkSpace(signUpName.getText())){
+                String fullName = signUpName.getText();
+                String firstName = separateName(fullName).getFirst(),
+                 lastName = separateName(fullName).getLast(),
+                 tellNo1 = tellNoo1.getText(),
+                tellNo2 = tellNoo2.getText(),
+                sex;
+                if (male.isSelected())
+                    sex = "M";
+                else sex = "F";
+                customer = new Customer(firstName, lastName,tellNo1,tellNo2,dataBaseName,new String(signUpPasswd.getPassword()),
+                        passWord, sex);
+                customer.add();
+                messageLabel.setForeground(Color.green);
+                messageLabel.setText("works up to this");
+
+            }
+            else{
+                messageLabel.setForeground(Color.red);
+                messageLabel.setText("Input full name correctly!!");
+                        }
+            else {
+                messageLabel.setForeground(Color.red);
+                messageLabel.setText("password must be > 3");
+                    }
+            else {
+                messageLabel.setForeground(Color.red);
+                messageLabel.setText("confirm and password aren't equal");
+            }
         }
 
     }

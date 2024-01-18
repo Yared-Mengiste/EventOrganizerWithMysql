@@ -14,8 +14,8 @@ public class Customer extends Person {
      * @param phoneNo2  is used to initialize phoneNo2
      */
     public Customer(String firstName, String lastName, String phoneNo1, String phoneNo2, String databaseName
-            , String pwd, String password) {
-        super(firstName, lastName, phoneNo1, phoneNo2, databaseName, "", password);
+            , String pwd, String password,String sex) {
+        super(firstName, lastName, phoneNo1, phoneNo2, databaseName, sex, password);
         this.pwd = pwd;
     }
 
@@ -43,12 +43,14 @@ public class Customer extends Person {
     public void add() {
 
         try {
-            pst = conn.prepareStatement("insert into Staff(first_name,last_name,password ,tellNo1, tellNo2)values(?,?,?,?,?)");
+            pst = conn.prepareStatement("insert into customer(first_name,last_name,password ,tellNo1, tellNo2, sex)" +
+                    "values(?,?,?,?,?,?)");
             pst.setString(1, firstName);
             pst.setString(2, lastName);
             pst.setString(4, phoneNo1);
             pst.setString(5, phoneNo2);
             pst.setString(3, pwd);
+            pst.setString(6, sex);
             System.out.println("Added");
 
             pst.executeUpdate();
@@ -56,5 +58,13 @@ public class Customer extends Person {
 
             e1.printStackTrace();
         }
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
+    public String getPwd() {
+        return pwd;
     }
 }
