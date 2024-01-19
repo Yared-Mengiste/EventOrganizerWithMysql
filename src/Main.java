@@ -245,6 +245,11 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         JLabel empty2 = new JLabel(".");
         constraint = frameConstraint(0,8,1,1, 0);
         staffSignInContainer.add(empty2, constraint);
+
+        messageLabel = new JLabel("");
+        messageLabel.setForeground(Color.RED);
+        constraint = frameConstraint(0, 9, 2, 1, 10);
+        signInContainer.add(messageLabel, constraint);
         //signUp JButton
         setVisible(true);
     }
@@ -510,11 +515,12 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
         }else if (e.getSource() == staffSignIn) {
             String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, dob, sex;
-            int id, positionId;
+            int id, positionId, supervisorId;
             ResultSet resultSet;
             fullName = staffName.getText();
             System.out.println(fullName);
-            if (checkSpace(fullName) && staffSignInPasswd.getPassword().length > 3) {
+            if (checkSpace(fullName) )
+                if(staffSignInPasswd.getPassword().length > 3) {
                 ArrayList<String> separatedName = separateName(fullName);
                 fName = separatedName.getFirst();
                 System.out.println(fName);
@@ -534,20 +540,22 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                         staffSignInPasswd.setText("");
                     } else {
                         id = resultSet.getInt("id");
-                        //TODO position id and supervisor id yikeral
+                        positionId = resultSet.getInt("position_id");
+                        supervisorId = resultSet.getInt("supervisor_id");
                         dob = resultSet.getString("DOB");
                         sex = resultSet.getString("sex");
                         phoneNo1 = resultSet.getString("tellNo1");
                         phoneNo2 = resultSet.getString("tellNo2");
                         staff = new Staff(fName, lName,phoneNo1,phoneNo2,sex,dataBaseName,dob,passWord,userPassword
-                                ,2,1);
+                                ,supervisorId,positionId);
                         staff.setId(id);
                         staffName.setText(staff.getDOB());
                     }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
-            }
+            }else messageLabel.setText("Password is > 3!!");
+            else messageLabel.setText("User Name includes father name!");
 
         } else if (e.getSource() == signUp) {
             signUpGui();

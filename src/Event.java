@@ -1,3 +1,4 @@
+import java.sql.Date;
 import java.sql.SQLException;
 
 public class Event extends MySqlConnector{
@@ -96,7 +97,7 @@ public class Event extends MySqlConnector{
             pst.setString(1, eventName);
             pst.setInt(2, typeId);
             pst.setInt(3, venueId);
-            pst.setString(4, eventDate);
+            pst.setDate(4, Date.valueOf(eventDate));//"yyyy-MM-dd" format String
             pst.setString(5, startTime);
             pst.setString(6, endTime);
             pst.setInt(7, customerId);

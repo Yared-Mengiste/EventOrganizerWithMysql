@@ -49,7 +49,7 @@ public class Staff extends Person {
             pst.setString(2, lastName);
             pst.setString(3, sex);
             pst.setInt(4, positionId);
-            pst.setString(5, DOB);
+            pst.setDate(5, Date.valueOf(DOB));//"yyyy-MM-dd" format String
             pst.setInt(6, supervisorId);
             pst.setString(7, pwd);
             pst.setString(8, phoneNo1);
