@@ -1,15 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Main extends MySqlConnector implements ActionListener, KeyListener {
+public class Main extends MySqlConnector implements ActionListener, KeyListener , MouseListener {
 
+    protected JLabel userOptionTitle, create, view, signOut;
+
+    protected JPanel south, north, east, west, center;
     protected JTextField signUpName, tellNoo1, tellNoo2;
     protected JPasswordField signUpPasswd, confirm;
     protected JLabel signUpNameL, signUpPasswdL, confirmL,messageLabel, tellNo1L, tellNo2L ;
@@ -44,7 +44,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setExtendedState(MAXIMIZED_BOTH);
         setTitle("Event Organizer");
         getContentPane().setBackground(new Color(101, 1, 1, 255));
-        setMinimumSize(new Dimension(500, 500));
+        setMinimumSize(new Dimension(900, 500));
 
         setVisible(true);
     }
@@ -116,6 +116,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
         name = new JTextField(25);
         name.setFont(new Font("Arial", Font.BOLD, 15));
+        name.addActionListener(this);
         constraint = frameConstraint(0,2, 2, 1, 10);
         signInContainer.add(name, constraint);
 
@@ -160,6 +161,11 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         signUp.addActionListener(this);
         constraint = frameConstraint(1,9,1,1, 0);
         signInContainer.add(signUp, constraint);
+
+        messageLabel = new JLabel("");
+        messageLabel.setForeground(Color.RED);
+        constraint = frameConstraint(0, 13, 2, 1, 10);
+        signInContainer.add(messageLabel, constraint);
 
         setVisible(true);
     }
@@ -383,9 +389,67 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
+    public  void userOption(){
+        removeAllComponents();
+        setLayout(new BorderLayout());
+        setVisible(false);
+        north = new JPanel();
+        north.setBackground(new Color(101, 1, 1, 255));
+        north.setPreferredSize(new Dimension(50, 100));
+        add(north, BorderLayout.NORTH);
+
+        south = new JPanel();
+        south.setBackground(new Color(101, 1, 1, 255));
+        south.setPreferredSize(new Dimension(50, 100));
+        add(south, BorderLayout.SOUTH);
+
+        east = new JPanel();
+        east.setBackground(new Color(101, 1, 1, 255));
+        east.setPreferredSize(new Dimension(200, 100));
+        add(east, BorderLayout.EAST);
+
+        west = new JPanel();
+        west.setBackground(new Color(101, 1, 1, 255));
+        west.setPreferredSize(new Dimension(200, 100));
+        add(west, BorderLayout.WEST);
+
+        center = new JPanel();
+        center.setLayout(new GridLayout(3,1));
+        center.setBackground(Color.orange);
+        add(center);
+
+        userOptionTitle = new JLabel("Welcome "+ customer.getFirstName() + " " + customer.getLastName() );
+        userOptionTitle.setForeground(Color.orange);
+        userOptionTitle.setFont(new Font("Serif", Font.PLAIN, 50));
+        north.add(userOptionTitle);
+
+        create = new JLabel("   1. Book an Event");
+        create.setFont(new Font("Serif", Font.PLAIN, 40));
+        create.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        create.setBackground(Color.orange);
+        create.addMouseListener(this);
+        center.add(create);
+
+        view = new JLabel("   2. View Booked Event");
+        view.setFont(new Font("Serif", Font.PLAIN, 40));
+        view.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        view.setBackground(Color.orange);
+        view.addMouseListener(this);
+        center.add(view);
+
+        signOut = new JLabel("  3. SignOut");
+        signOut.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        signOut.setFont(new Font("Serif", Font.PLAIN, 40));
+        signOut.setBackground(Color.orange);
+        signOut.addMouseListener(this);
+        center.add(signOut);
+
+        setVisible(true);
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
-
+        
     }
 
     @Override
@@ -404,47 +468,14 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
             staffSignInGui();
         } else if (e.getSource() == signInCustomer) {
             signInGui();
-        } /*else if (e.getSource() == signIn) {
-            String fullName, fName, lName, userPassword, phoneNo1, phoneNo2;
-            int id;
-            ResultSet resultSet = null;
-            fullName = name.getText();
-            System.out.println(fullName);
-            if (checkSpace(fullName) && signInPasswd.getPassword().length > 3) {
-                ArrayList<String> separatedName = separateName(fullName);
-                fName = separatedName.getFirst();
-                System.out.println(fName);
-                lName = separatedName.getLast();
-                System.out.println(lName);
-                userPassword = new String(signInPasswd.getPassword());
-                System.out.println(userPassword);
-                try {
-                    resultSet = Customer.getCustomer(fName, lName, userPassword, dataBaseName, passWord);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                try {
-                    if (!(resultSet == null || !resultSet.next())) {
-                        phoneNo1 = resultSet.getString(4);
-                        phoneNo2 = resultSet.getString(5);
-                        id = resultSet.getInt(1);
-                        customer = new Customer(fName, lName, phoneNo1, phoneNo2, dataBaseName, passWord, userPassword, sex);
-                        customer.setId(id);
-                        name.setText(customer.getFirstName());
-
-                    }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-
-        } */else if (e.getSource() == signIn) {
+        } else if (e.getSource() == signIn) {
             String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, sex;
             int id;
             ResultSet resultSet;
             fullName = name.getText();
             System.out.println(fullName);
-            if (checkSpace(fullName) && signInPasswd.getPassword().length > 3) {
+            if (checkSpace(fullName))
+                if(signInPasswd.getPassword().length > 3) {
                 ArrayList<String> separatedName = separateName(fullName);
                 fName = separatedName.getFirst();
                 System.out.println(fName);
@@ -469,12 +500,13 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                         id = resultSet.getInt("id");
                         customer = new Customer(fName, lName, phoneNo1, phoneNo2, dataBaseName, passWord, userPassword, sex);
                         customer.setId(id);
-                        name.setText(customer.getSex());
+                        userOption();
                     }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
-            }
+            } else messageLabel.setText("Password is > 3!!");
+            else messageLabel.setText("User Name includes father name!");
 
         }else if (e.getSource() == staffSignIn) {
             String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, dob, sex;
@@ -551,8 +583,9 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                 messageLabel.setForeground(Color.red);
                 messageLabel.setText("confirm and password aren't equal");
             }
+        } else if (e.getSource() == name) {
+            signInPasswd.requestFocus();
         }
-
     }
 
     /**
@@ -619,5 +652,36 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     }
     protected boolean checkPasswordMatch(char[] password, char[] confirmPassword) {
         return new String(password).equals(new String(confirmPassword));
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if(e.getSource() == create){
+            System.out.println("create");
+        } else if (e.getSource() == view) {
+            System.out.println("view");
+        } else if (e.getSource() == signOut) {
+            signInGui();
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
