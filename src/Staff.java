@@ -17,6 +17,17 @@ public class Staff extends Person {
         this.pwd = pwd;
         this.positionId = positionId;
     }
+
+    /**
+     * getStaff is a method that is used to get a Staff's ingo by giving it
+     * @param fName
+     * @param lName
+     * @param password
+     * @param dataBaseName
+     * @param passWord
+     * @return and returns A result set that u can use
+     * @throws SQLException
+     */
     public static ResultSet getStaff(String fName, String lName, String password, String dataBaseName, String passWord) throws SQLException {
         String sql = "SELECT * FROM staff WHERE first_name = ? AND last_name = ? AND password = ?";
         ResultSet result = null;
@@ -44,6 +55,8 @@ public class Staff extends Person {
                 " tellNo1, tellNo2) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
+                    passWord);
             pst = conn.prepareStatement(sql);
             pst.setString(1, firstName);
             pst.setString(2, lastName);
@@ -57,6 +70,7 @@ public class Staff extends Person {
 
             pst.executeUpdate();
             System.out.println("Record added to Staff table.");
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

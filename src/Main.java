@@ -7,8 +7,16 @@ import java.util.ArrayList;
 
 public class Main extends MySqlConnector implements ActionListener, KeyListener , MouseListener {
 
-    protected JLabel userOptionTitle, create, view, signOut;
-
+    protected JLabel userOptionTitle, create, view, addGuests,signOut, showPriceL;
+    protected double perPersonPrice;
+    protected JLabel eventTypeChoice, birthDay, wedding, graduation;
+    protected JButton backFirst, finishBooking, confirmBooking;
+    protected JLabel eventNameL, guestNoL, eventDateL, startTimeL, endTimeL;
+    protected JTextField eventNameT, guestNo, eventDate, startTime, endTime, showPrice;
+    protected JButton backToCreate;
+    protected ArrayList<Double> venuePrice;
+    protected ArrayList<Integer> venueId;
+    protected JComboBox<String> venueList;
     protected JPanel south, north, east, west, center;
     protected JTextField signUpName, tellNoo1, tellNoo2;
     protected JPasswordField signUpPasswd, confirm;
@@ -19,6 +27,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     protected JTextField name;
     protected Customer customer;
     protected Staff staff;
+    protected Event event;
     protected JPasswordField signInPasswd;
     protected JLabel nameL,signInL, signInPasswdL;
     protected JMenuBar menuBar;
@@ -419,7 +428,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         add(west, BorderLayout.WEST);
 
         center = new JPanel();
-        center.setLayout(new GridLayout(3,1));
+        center.setLayout(new GridLayout(4,1));
         center.setBackground(Color.orange);
         add(center);
 
@@ -442,12 +451,222 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         view.addMouseListener(this);
         center.add(view);
 
-        signOut = new JLabel("  3. SignOut");
+        addGuests = new JLabel("  3. Add Guests");
+        addGuests.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        addGuests.setFont(new Font("Serif", Font.PLAIN, 40));
+        addGuests.setBackground(Color.orange);
+        addGuests.addMouseListener(this);
+        center.add(addGuests);
+
+
+        signOut = new JLabel("  4. SignOut");
         signOut.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
         signOut.setFont(new Font("Serif", Font.PLAIN, 40));
         signOut.setBackground(Color.orange);
         signOut.addMouseListener(this);
         center.add(signOut);
+
+        setVisible(true);
+    }
+
+    public  void bookEvent(){
+        removeAllComponents();
+        setVisible(false);
+        setLayout(new BorderLayout());
+        north = new JPanel();
+        north.setBackground(new Color(101, 1, 1, 255));
+        north.setPreferredSize(new Dimension(50, 100));
+        add(north, BorderLayout.NORTH);
+
+        south = new JPanel();
+        south.setBackground(new Color(101, 1, 1, 255));
+        south.setPreferredSize(new Dimension(50, 100));
+        add(south, BorderLayout.SOUTH);
+
+        east = new JPanel();
+        east.setBackground(new Color(101, 1, 1, 255));
+        east.setPreferredSize(new Dimension(200, 100));
+        add(east, BorderLayout.EAST);
+
+        west = new JPanel();
+        west.setBackground(new Color(101, 1, 1, 255));
+        west.setPreferredSize(new Dimension(200, 100));
+        add(west, BorderLayout.WEST);
+
+        center = new JPanel();
+        center.setLayout(new GridLayout(11,1));
+        center.setBackground(Color.orange);
+        add(center);
+
+        eventTypeChoice = new JLabel("Fill The Form");
+        eventTypeChoice.setForeground(Color.orange);
+        eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
+        north.add(eventTypeChoice);
+
+        eventNameL = new JLabel("Event Name");
+        eventNameL.setFont(new Font("Serif", Font.PLAIN, 25));
+        center.add(eventNameL);
+
+        eventNameT = new JTextField();
+        eventNameT.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(eventNameT);
+
+        guestNoL = new JLabel("Guest No ");
+        guestNoL.setFont(new Font("Serif", Font.PLAIN, 25));
+        center.add(guestNoL);
+
+        guestNo = new JTextField();
+        guestNo.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(guestNo);
+
+        eventDateL = new JLabel("Event Date yyyy-MM-dd");
+        eventDateL.setFont(new Font("Serif", Font.PLAIN, 25));
+        center.add(eventDateL);
+
+        eventDate = new JTextField();
+        eventDate.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(eventDate);
+
+        startTimeL = new JLabel("Start Time 00:00 pm/am format");
+        startTimeL.setFont(new Font("Serif", Font.PLAIN, 25));
+        center.add(startTimeL);
+
+        startTime = new JTextField();
+        startTime.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(startTime);
+
+        endTimeL = new JLabel("End Time 00:00 am/pm format");
+        endTimeL.setFont(new Font("Serif", Font.PLAIN, 25));
+        center.add(endTimeL);
+
+        endTime = new JTextField();
+        endTime.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(endTime);
+
+        venueList  = new JComboBox<>();
+        venueList.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(venueList);
+
+        try {
+            ResultSet eventResult = giveQuery("SELECT CONCAT(id , \".\", name, \" max \", capacity, ' $', price), price, id from venue");
+            venuePrice = new ArrayList<>();
+            venueId = new ArrayList<>();
+            while (eventResult.next()){
+                venueList.addItem(eventResult.getString(1));
+                venuePrice.add(eventResult.getDouble("price"));
+                venueId.add(eventResult.getInt("id"));
+            }
+            System.out.println(venuePrice);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        finishBooking = new JButton("Enter");
+        finishBooking.addActionListener(this);
+        //todo connect the finish listener button
+        finishBooking.setFont(new Font("Serif", Font.PLAIN, 15));
+        finishBooking.setBackground(new Color(12,100, 255));
+        south.setLayout(new FlowLayout(FlowLayout.TRAILING, 20, 10));
+        south.add(finishBooking);
+        finishBooking.setFocusable(false);
+
+        showPriceL = new JLabel("Price");
+        showPriceL.setForeground(Color.white);
+        showPriceL.setFont(new Font("Serif", Font.PLAIN, 25));
+        south.add(showPriceL);
+
+        showPrice = new JTextField(20);
+        showPrice.setFont(new Font("Serif", Font.BOLD, 20));
+        south.add(showPrice);
+
+        confirmBooking = new JButton("Confirm");
+        //todo connect the confirm button
+        confirmBooking.setFont(new Font("Serif", Font.PLAIN, 15));
+        confirmBooking.setBackground(new Color(12,100, 255));
+        confirmBooking.addActionListener(this);
+        confirmBooking.setEnabled(false);
+        south.add(confirmBooking);
+        confirmBooking.setFocusable(false);
+
+
+        backToCreate = new JButton("Back");
+        backToCreate.setFont(new Font("Serif", Font.PLAIN, 15));
+        backToCreate.setBackground(new Color(12,100, 255));
+        backToCreate.addActionListener(this);
+        south.setLayout(new FlowLayout(FlowLayout.TRAILING));
+        south.add(backToCreate);
+        backToCreate.setFocusable(false);
+
+
+        setVisible(true);
+    }
+
+    public  void eventOptions(){
+        removeAllComponents();
+        setVisible(false);
+        north = new JPanel();
+        north.setBackground(new Color(101, 1, 1, 255));
+        north.setPreferredSize(new Dimension(50, 100));
+        add(north, BorderLayout.NORTH);
+
+        south = new JPanel();
+        south.setBackground(new Color(101, 1, 1, 255));
+        south.setPreferredSize(new Dimension(50, 100));
+        add(south, BorderLayout.SOUTH);
+
+        east = new JPanel();
+        east.setBackground(new Color(101, 1, 1, 255));
+        east.setPreferredSize(new Dimension(200, 100));
+        add(east, BorderLayout.EAST);
+
+        west = new JPanel();
+        west.setBackground(new Color(101, 1, 1, 255));
+        west.setPreferredSize(new Dimension(200, 100));
+        add(west, BorderLayout.WEST);
+
+        center = new JPanel();
+        center.setLayout(new GridLayout(3,1));
+        center.setBackground(Color.orange);
+        add(center);
+
+        eventTypeChoice = new JLabel("Choose Event Type");
+        eventTypeChoice.setForeground(Color.orange);
+        eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
+        north.add(eventTypeChoice);
+
+        wedding = new JLabel("   1. Wedding");
+        wedding.addMouseListener(this);
+        wedding.setFont(new Font("Serif", Font.PLAIN, 40));
+        wedding.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        wedding.setBackground(Color.orange);
+        wedding.addMouseListener(this);
+        center.add(wedding);
+
+        birthDay = new JLabel("   2. Birthday");
+        birthDay.addMouseListener(this);
+        birthDay.setFont(new Font("Serif", Font.PLAIN, 40));
+        birthDay.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        birthDay.setBackground(Color.orange);
+        birthDay.addMouseListener(this);
+        center.add(birthDay);
+
+
+        graduation = new JLabel("  3. Graduation");
+        graduation.addMouseListener(this);
+        graduation.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        graduation.setFont(new Font("Serif", Font.PLAIN, 40));
+        graduation.setBackground(Color.orange);
+        graduation.addMouseListener(this);
+        center.add(graduation);
+
+        backFirst = new JButton("Back");
+        backFirst.addActionListener(this);
+        backFirst.setFont(new Font("Serif", Font.PLAIN, 15));
+        backFirst.setBackground(new Color(12,100, 255));
+        south.setLayout(new FlowLayout(FlowLayout.TRAILING));
+        south.add(backFirst);
+        backFirst.setFocusable(false);
+
 
         setVisible(true);
     }
@@ -593,6 +812,26 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
             }
         } else if (e.getSource() == name) {
             signInPasswd.requestFocus();
+        } else if (e.getSource() == backFirst) {
+            eventOptions();
+        } else if (e.getSource() == backToCreate) {
+            bookEvent();
+        } else if (e.getSource() == finishBooking) {
+            showPrice.setText(String.valueOf((venuePrice.get(venueList.getSelectedIndex()) +
+                    Integer.parseInt(guestNo.getText()) * perPersonPrice)));
+                    confirmBooking.setEnabled(true);
+        } else if (e.getSource() == confirmBooking) {
+            event.setEventName(eventNameT.getText().toUpperCase());
+            event.setGuests(Integer.parseInt(guestNo.getText()));
+            event.setEventDate(eventDate.getText());
+            event.setStartTime(startTime.getText());
+            event.setEndTime(endTime.getText());
+            event.setEventCost((venuePrice.get(venueList.getSelectedIndex()) + Integer.parseInt(guestNo.getText()) * perPersonPrice));
+            event.setVenueId(venueId.get(venueList.getSelectedIndex()));
+            event.setCustomerId(customer.getId());
+            event.addEvent();
+            //todo add event id and staff id
+            //todo check date
         }
     }
 
@@ -665,11 +904,19 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     @Override
     public void mouseClicked(MouseEvent e) {
         if(e.getSource() == create){
+            eventOptions();
             System.out.println("create");
         } else if (e.getSource() == view) {
             System.out.println("view");
         } else if (e.getSource() == signOut) {
             signInGui();
+        } else if (e.getSource() == addGuests) {
+            System.out.println("guests");
+        } else if (e.getSource() == wedding) {
+            perPersonPrice = 500;
+            event = new Event(dataBaseName, passWord);
+            event.setTypeId(1);
+            bookEvent();
         }
     }
 

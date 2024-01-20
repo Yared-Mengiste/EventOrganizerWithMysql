@@ -24,7 +24,6 @@ public class MySqlConnector extends JFrame {
     public MySqlConnector(String dataBaseName, String passWord) {
         this.dataBaseName = dataBaseName;
         this.passWord = passWord;
-        connect();
     }
 
     public void connect() {
@@ -50,12 +49,15 @@ public class MySqlConnector extends JFrame {
     public void add(String queries, String[] values) {
 
         try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
+                    passWord);
             pst = conn.prepareStatement(queries);
             for (int i = 0; i < values.length; i++)
                 pst.setString(i + 1, values[i]);
             System.out.println("Added");
 
             pst.executeUpdate();
+            conn.close();
         }
 
         catch (SQLException e1) {
@@ -71,8 +73,11 @@ public class MySqlConnector extends JFrame {
      * @param table is a JTable param that will show the query
      */
     public void showTable(String query, JTable table) {
-        try (Statement statement = conn.createStatement();
-                ResultSet rs = statement.executeQuery(query)) {
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
+                passWord);
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(query);
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.setRowCount(0);
 
@@ -93,9 +98,27 @@ public class MySqlConnector extends JFrame {
                 model.addRow(rows);
             }
             System.out.println("success");
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public ResultSet giveQuery(String sql) throws SQLException {
+        ResultSet result = null;
+         conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
+                passWord);
+
+        try {
+
+            PreparedStatement pst = conn.prepareStatement(sql);
+            result = pst.executeQuery();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
 
 }

@@ -43,6 +43,8 @@ public class Customer extends Person {
     public void add() {
 
         try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
+                    passWord);
             pst = conn.prepareStatement("insert into customer(first_name,last_name,password ,tellNo1, tellNo2, sex)" +
                     "values(?,?,?,?,?,?)");
             pst.setString(1, firstName);
@@ -51,9 +53,10 @@ public class Customer extends Person {
             pst.setString(5, phoneNo2);
             pst.setString(3, pwd);
             pst.setString(6, sex);
-            System.out.println("Added");
 
             pst.executeUpdate();
+            System.out.println("Added");
+            conn.close();
         } catch (SQLException e1) {
 
             e1.printStackTrace();

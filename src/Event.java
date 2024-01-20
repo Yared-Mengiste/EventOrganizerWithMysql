@@ -1,4 +1,5 @@
 import java.sql.Date;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Event extends MySqlConnector{
@@ -6,15 +7,22 @@ public class Event extends MySqlConnector{
     private String eventName;
     private int typeId;
     private int venueId;
+    private  int guests;
     private String eventDate;
     private String startTime;
     private String endTime;
     private int customerId;
+    private double eventCost;
 
+    public Event(String databaseName, String password){
+        super(databaseName, password);
+    }
     public Event(int id, String eventName, int typeId, int venueId, String eventDate,
-                 String startTime, String endTime, int customerId,String databaseName, String password) {
+                 String startTime, String endTime, int customerId, String databaseName, String password, int guests,
+                 double eventCost) {
         super(databaseName, password);
         this.id = id;
+        this.guests = guests;
         this.eventName = eventName;
         this.typeId = typeId;
         this.venueId = venueId;
@@ -22,9 +30,15 @@ public class Event extends MySqlConnector{
         this.startTime = startTime;
         this.endTime = endTime;
         this.customerId = customerId;
+        this.eventCost = eventCost;
     }
 
-
+    public int getGuests() {
+        return guests;
+    }
+    public void setGuests(int guests){
+        this.guests = guests;
+    }
     public int getId() {
         return id;
     }
@@ -88,12 +102,23 @@ public class Event extends MySqlConnector{
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
+    public double getEventCost() {
+        return eventCost;
+    }
+
+    public void setEventCost(double eventCost) {
+        this.eventCost = eventCost;
+    }
+
     public void addEvent() {
 
         String sql = "INSERT INTO Event (event_name, type_id, venue_id, event_date, start_time," +
-                " end_time, customer_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                " end_time, customer_id, guest, event_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try {pst = conn.prepareStatement(sql);
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
+                    passWord);
+            pst = conn.prepareStatement(sql);
             pst.setString(1, eventName);
             pst.setInt(2, typeId);
             pst.setInt(3, venueId);
@@ -101,12 +126,14 @@ public class Event extends MySqlConnector{
             pst.setString(5, startTime);
             pst.setString(6, endTime);
             pst.setInt(7, customerId);
+            pst.setInt(8, guests);
+            pst.setDouble(9, eventCost);
 
             pst.executeUpdate();
             System.out.println("Record added to Event table.");
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
 }
