@@ -408,7 +408,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
-    public  void userOption(){
+    public void beginning(){
         removeAllComponents();
         setLayout(new BorderLayout());
         setVisible(false);
@@ -433,9 +433,14 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         add(west, BorderLayout.WEST);
 
         center = new JPanel();
-        center.setLayout(new GridLayout(4,1));
         center.setBackground(Color.orange);
         add(center);
+
+    }
+    public  void userOption(){
+        beginning();
+
+        center.setLayout(new GridLayout(4,1));
 
         userOptionTitle = new JLabel("Welcome "+ customer.getFirstName() + " " + customer.getLastName() );
         userOptionTitle.setForeground(Color.orange);
@@ -475,41 +480,19 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     }
 
     public  void showBookedEvents(){
-        removeAllComponents();
-        setVisible(false);
-        north = new JPanel();
-        north.setBackground(new Color(101, 1, 1, 255));
-        north.setPreferredSize(new Dimension(50, 100));
-        add(north, BorderLayout.NORTH);
+        beginning();
 
-        south = new JPanel();
-        south.setBackground(new Color(101, 1, 1, 255));
-        south.setPreferredSize(new Dimension(50, 100));
-        add(south, BorderLayout.SOUTH);
-
-        east = new JPanel();
-        east.setBackground(new Color(101, 1, 1, 255));
-        east.setPreferredSize(new Dimension(200, 100));
-        add(east, BorderLayout.EAST);
-
-        west = new JPanel();
-        west.setBackground(new Color(101, 1, 1, 255));
-        west.setPreferredSize(new Dimension(200, 100));
-        add(west, BorderLayout.WEST);
+        center.setLayout(new GridLayout(2,1));
 
         eventTypeChoice = new JLabel("Events Information");
         eventTypeChoice.setForeground(Color.orange);
         eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
         north.add(eventTypeChoice);
 
-        center = new JPanel();
-        center.setLayout(new GridLayout(2,1));
-        center.setBackground(Color.orange);
-        add(center);
-
         eventInformation = new JTable();
         eventInformation.setFont(new Font("Serif", Font.PLAIN, 20));
-        showTable("select event_name, event_date, type_name, name  from event natural join venue natural join eventType where customer_id ="
+        showTable("select event_name, event_date, type_name, name  from event e join venue v on e.venue_id = v.id" +
+                " join eventType et on et.id = e.type_id where customer_id ="
                 + customer.getId(), eventInformation);
         eventInformation.setBackground(Color.orange);
         center.add(new JScrollPane(eventInformation));
@@ -534,33 +517,9 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     }
 
     public  void bookEvent(){
-        removeAllComponents();
-        setVisible(false);
-        setLayout(new BorderLayout());
-        north = new JPanel();
-        north.setBackground(new Color(101, 1, 1, 255));
-        north.setPreferredSize(new Dimension(50, 100));
-        add(north, BorderLayout.NORTH);
+        beginning();
 
-        south = new JPanel();
-        south.setBackground(new Color(101, 1, 1, 255));
-        south.setPreferredSize(new Dimension(50, 100));
-        add(south, BorderLayout.SOUTH);
-
-        east = new JPanel();
-        east.setBackground(new Color(101, 1, 1, 255));
-        east.setPreferredSize(new Dimension(200, 100));
-        add(east, BorderLayout.EAST);
-
-        west = new JPanel();
-        west.setBackground(new Color(101, 1, 1, 255));
-        west.setPreferredSize(new Dimension(200, 100));
-        add(west, BorderLayout.WEST);
-
-        center = new JPanel();
         center.setLayout(new GridLayout(11,1));
-        center.setBackground(Color.orange);
-        add(center);
 
         eventTypeChoice = new JLabel("Fill The Form");
         eventTypeChoice.setForeground(Color.orange);
@@ -669,32 +628,9 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     }
 
     public  void eventOptions(){
-        removeAllComponents();
-        setVisible(false);
-        north = new JPanel();
-        north.setBackground(new Color(101, 1, 1, 255));
-        north.setPreferredSize(new Dimension(50, 100));
-        add(north, BorderLayout.NORTH);
+        beginning();
 
-        south = new JPanel();
-        south.setBackground(new Color(101, 1, 1, 255));
-        south.setPreferredSize(new Dimension(50, 100));
-        add(south, BorderLayout.SOUTH);
-
-        east = new JPanel();
-        east.setBackground(new Color(101, 1, 1, 255));
-        east.setPreferredSize(new Dimension(200, 100));
-        add(east, BorderLayout.EAST);
-
-        west = new JPanel();
-        west.setBackground(new Color(101, 1, 1, 255));
-        west.setPreferredSize(new Dimension(200, 100));
-        add(west, BorderLayout.WEST);
-
-        center = new JPanel();
         center.setLayout(new GridLayout(3,1));
-        center.setBackground(Color.orange);
-        add(center);
 
         eventTypeChoice = new JLabel("Choose Event Type");
         eventTypeChoice.setForeground(Color.orange);
