@@ -43,8 +43,7 @@ public class Customer extends Person {
     public void add() {
 
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
-                    passWord);
+            connect();
             pst = conn.prepareStatement("insert into customer(first_name,last_name,password ,tellNo1, tellNo2, sex)" +
                     "values(?,?,?,?,?,?)");
             pst.setString(1, firstName);

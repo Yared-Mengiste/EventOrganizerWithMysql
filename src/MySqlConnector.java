@@ -74,8 +74,7 @@ public class MySqlConnector extends JFrame {
      */
     public void showTable(String query, JTable table) {
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
-                passWord);
+            connect();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(query);
             DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -106,9 +105,7 @@ public class MySqlConnector extends JFrame {
 
     public ResultSet giveQuery(String sql) throws SQLException {
         ResultSet result = null;
-         conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
-                passWord);
-
+         connect();
         try {
 
             PreparedStatement pst = conn.prepareStatement(sql);

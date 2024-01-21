@@ -29,6 +29,9 @@
     <filter-actions connection-id="48b8a767-beec-42ef-a216-d36beb5be28c" dataset="event_organizer.staff" active-filter-id="" />
     <filter-actions connection-id="48b8a767-beec-42ef-a216-d36beb5be28c" dataset="event_organizer.customer" active-filter-id="" />
   </component>
+  <component name="DBNavigator.Project.ExecutionManager">
+    <retain-sticky-names value="false" />
+  </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />

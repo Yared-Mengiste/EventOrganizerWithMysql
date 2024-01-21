@@ -1,5 +1,6 @@
 import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Event extends MySqlConnector{
@@ -17,11 +18,10 @@ public class Event extends MySqlConnector{
     public Event(String databaseName, String password){
         super(databaseName, password);
     }
-    public Event(int id, String eventName, int typeId, int venueId, String eventDate,
+    public Event( String eventName, int typeId, int venueId, String eventDate,
                  String startTime, String endTime, int customerId, String databaseName, String password, int guests,
                  double eventCost) {
         super(databaseName, password);
-        this.id = id;
         this.guests = guests;
         this.eventName = eventName;
         this.typeId = typeId;
@@ -110,14 +110,30 @@ public class Event extends MySqlConnector{
         this.eventCost = eventCost;
     }
 
+    /**
+     * this method gets last event id and assigns the new event id adding 1
+     */
+    public void setId(){
+        int event_id = 0;
+        try {
+            ResultSet eventResult = giveQuery("SELECT id from event");
+            while (eventResult.next()) {
+                event_id = eventResult.getInt(1);
+            }
+            eventResult.close();
+        } catch (SQLException e1){
+            e1.printStackTrace();
+        }
+        id = event_id + 1;
+    }
+
     public void addEvent() {
 
         String sql = "INSERT INTO Event (event_name, type_id, venue_id, event_date, start_time," +
-                " end_time, customer_id, guest, event_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " end_time, customer_id, guest, event_cost, id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
-                    passWord);
+            connect();
             pst = conn.prepareStatement(sql);
             pst.setString(1, eventName);
             pst.setInt(2, typeId);
@@ -128,6 +144,7 @@ public class Event extends MySqlConnector{
             pst.setInt(7, customerId);
             pst.setInt(8, guests);
             pst.setDouble(9, eventCost);
+            pst.setInt(10, id);
 
             pst.executeUpdate();
             System.out.println("Record added to Event table.");

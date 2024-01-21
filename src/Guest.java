@@ -16,13 +16,15 @@ public class Guest extends Person{
     public void add() {
 
         try {
-            pst = conn.prepareStatement("insert into Guest (first_name,last_name,tellNo)values(?,?,?,?,?)");
+            connect();
+            pst = conn.prepareStatement("insert into Guest (first_name,last_name,tellNo)values(?,?,?)");
             pst.setString(1, firstName);
             pst.setString(2, lastName);
-            pst.setString(4, phoneNo1);
+            pst.setString(3, phoneNo1);
             System.out.println("Added");
 
             pst.executeUpdate();
+            conn.close();
         } catch (SQLException e1) {
 
             e1.printStackTrace();

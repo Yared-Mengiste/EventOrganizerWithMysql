@@ -3,7 +3,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Main extends MySqlConnector implements ActionListener, KeyListener , MouseListener {
 
@@ -39,6 +41,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     protected JPanel staffSignInContainer;
     protected JRadioButton male,female;
     protected ButtonGroup group;
+    protected NumberFormat currency = NumberFormat.getCurrencyInstance(Locale.US);
 
     /**
      * this constructor accepts
@@ -588,6 +591,9 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         south.add(confirmBooking);
         confirmBooking.setFocusable(false);
 
+        messageLabel = new JLabel("");
+        messageLabel.setForeground(Color.GREEN);
+        west.add(messageLabel);
 
         backToCreate = new JButton("Back");
         backToCreate.setFont(new Font("Serif", Font.PLAIN, 15));
@@ -815,12 +821,36 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         } else if (e.getSource() == backFirst) {
             eventOptions();
         } else if (e.getSource() == backToCreate) {
-            bookEvent();
+            eventOptions();
         } else if (e.getSource() == finishBooking) {
-            showPrice.setText(String.valueOf((venuePrice.get(venueList.getSelectedIndex()) +
-                    Integer.parseInt(guestNo.getText()) * perPersonPrice)));
-                    confirmBooking.setEnabled(true);
+            try {
+                int gustCheck = Integer.parseInt(guestNo.getText());
+                if (gustCheck > 20 ) {
+                    if(eventDate.getText().charAt(4) == '-' && eventDate.getText().charAt(7) == '-') {
+                        if (!eventNameT.getText().isBlank()) {
+                            if (!endTime.getText().isBlank()) {
+                                if (!startTime.getText().isBlank()) {
+                                    int selected = venueList.getSelectedIndex();
+                                    if (!(selected == -1)) {
+                                        double sPrice = (venuePrice.get(venueList.getSelectedIndex()) +
+                                                Integer.parseInt(guestNo.getText()) * perPersonPrice);
+                                        String giveFormula = currency.format(venuePrice.get(venueList.getSelectedIndex())) + " + " +
+                                                "(" + currency.format(perPersonPrice) + " * " + guestNo.getText() + ")";
+                                        messageLabel.setText(giveFormula);
+                                        showPrice.setText(String.valueOf(currency.format(venuePrice.get(venueList.getSelectedIndex()) +
+                                                Integer.parseInt(guestNo.getText()) * perPersonPrice)));
+                                        confirmBooking.setEnabled(true);
+                                    } else messageLabel.setText(" first Choose a Venue!!");
+                                } else messageLabel.setText("Start time can't be empty!!");
+                            } else messageLabel.setText("End Time can't be empty!!");
+                        } else messageLabel.setText("Event Name can't be empty!!");
+                    }else messageLabel.setText("Date format yyyy-MM-dd");
+                } else messageLabel.setText("Guest No should be > 20");
+            }catch (NumberFormatException e1){
+                messageLabel.setText("No Guests can be only no");
+            }
         } else if (e.getSource() == confirmBooking) {
+            int staff_id = 0, dateCheck = 0;
             event.setEventName(eventNameT.getText().toUpperCase());
             event.setGuests(Integer.parseInt(guestNo.getText()));
             event.setEventDate(eventDate.getText());
@@ -829,9 +859,68 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
             event.setEventCost((venuePrice.get(venueList.getSelectedIndex()) + Integer.parseInt(guestNo.getText()) * perPersonPrice));
             event.setVenueId(venueId.get(venueList.getSelectedIndex()));
             event.setCustomerId(customer.getId());
-            event.addEvent();
-            //todo add event id and staff id
+            event.setId();
+            System.out.println(event.getId());
             //todo check date
+            try {
+                connect();
+                //should use a single quotation to notify the event_date is a date
+                ResultSet resultSet = giveQuery("select  count(*) as count from event where event_date = '" +
+                        event.getEventDate() + "' and venue_id = " + event.getVenueId());
+                while (resultSet.next()) {
+                    dateCheck = resultSet.getInt("count");
+                    System.out.println(dateCheck);
+                }
+                conn.close();
+                if (dateCheck == 0) {
+                    event.addEvent();
+                    //todo add event id and staff id
+                    try {
+                        ResultSet eventResult = giveQuery("SELECT * from staff where position_id = " + event.getTypeId() +
+                                " ORDER BY event_work DESC LIMIT 1");
+                        while (eventResult.next()) {
+                            staff_id = eventResult.getInt("id");
+                            System.out.println(staff_id);
+                        }
+                        eventResult.close();
+                        try {
+                            connect();
+                            pst = conn.prepareStatement("UPDATE staff SET event_work = event_work + 1 WHERE id = ?");
+                            pst.setInt(1, staff_id);
+                            pst.executeUpdate();
+                            conn.close();
+                        } catch (SQLException e2) {
+                            e2.printStackTrace();
+                        }
+                        //todo add staff_id and event_id to eventStaff
+                        try {
+                            connect();
+                            pst = conn.prepareStatement("INSERT INTO eventStaff(event_id, staff_id) VALUES (?, ?)");
+                            pst.setInt(1, event.getId());
+                            pst.setInt(2, staff_id);
+                            pst.executeUpdate();
+                            System.out.println("Recorded is added to eventStaff");
+                            conn.close();
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
+                        }
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                    //todo change event_work by one
+                    try {
+                        connect();
+                        pst = conn.prepareStatement("update staff set event_work = event_work + 1 where staff_id = "
+                                + staff_id);
+                        conn.close();
+                    } catch (SQLException e2) {
+                        e2.printStackTrace();
+                    }
+                }else messageLabel.setText("The Date is Booked!!");
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
         }
     }
 
@@ -916,6 +1005,16 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
             perPersonPrice = 500;
             event = new Event(dataBaseName, passWord);
             event.setTypeId(1);
+            bookEvent();
+        } else if (e.getSource() == birthDay) {
+            perPersonPrice = 400;
+            event = new Event(dataBaseName, passWord);
+            event.setTypeId(2);
+            bookEvent();
+        }else if (e.getSource() == graduation) {
+            perPersonPrice = 350;
+            event = new Event(dataBaseName, passWord);
+            event.setTypeId(3);
             bookEvent();
         }
     }
