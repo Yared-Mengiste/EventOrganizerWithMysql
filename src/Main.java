@@ -11,6 +11,8 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
     protected JLabel userOptionTitle, create, view, addGuests,signOut, showPriceL;
     protected double perPersonPrice;
+    protected JTable eventInformation, organizerInfo;
+
     protected JLabel eventTypeChoice, birthDay, wedding, graduation;
     protected JButton backFirst, finishBooking, confirmBooking;
     protected JLabel eventNameL, guestNoL, eventDateL, startTimeL, endTimeL;
@@ -472,6 +474,65 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
+    public  void showBookedEvents(){
+        removeAllComponents();
+        setVisible(false);
+        north = new JPanel();
+        north.setBackground(new Color(101, 1, 1, 255));
+        north.setPreferredSize(new Dimension(50, 100));
+        add(north, BorderLayout.NORTH);
+
+        south = new JPanel();
+        south.setBackground(new Color(101, 1, 1, 255));
+        south.setPreferredSize(new Dimension(50, 100));
+        add(south, BorderLayout.SOUTH);
+
+        east = new JPanel();
+        east.setBackground(new Color(101, 1, 1, 255));
+        east.setPreferredSize(new Dimension(200, 100));
+        add(east, BorderLayout.EAST);
+
+        west = new JPanel();
+        west.setBackground(new Color(101, 1, 1, 255));
+        west.setPreferredSize(new Dimension(200, 100));
+        add(west, BorderLayout.WEST);
+
+        eventTypeChoice = new JLabel("Events Information");
+        eventTypeChoice.setForeground(Color.orange);
+        eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
+        north.add(eventTypeChoice);
+
+        center = new JPanel();
+        center.setLayout(new GridLayout(2,1));
+        center.setBackground(Color.orange);
+        add(center);
+
+        eventInformation = new JTable();
+        eventInformation.setFont(new Font("Serif", Font.PLAIN, 20));
+        showTable("select event_name, event_date, type_name, name  from event natural join venue natural join eventType where customer_id ="
+                + customer.getId(), eventInformation);
+        eventInformation.setBackground(Color.orange);
+        center.add(new JScrollPane(eventInformation));
+
+        organizerInfo = new JTable();
+        organizerInfo.setBackground(Color.orange);
+        organizerInfo.setFont(new Font("Serif", Font.PLAIN, 15));
+        showTable("select concat(first_name, ' ', last_name) as Organizer , tellNo1, tellNo2 from\n" +
+                "event e join eventStaff es on e.id = es.event_id join staff s on es.staff_id = s.id where " +
+                "customer_id =" +customer.getId(), organizerInfo);
+        organizerInfo.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(new JScrollPane(organizerInfo));
+
+        backFirst = new JButton("Back");
+        backFirst.setFont(new Font("Serif", Font.PLAIN, 15));
+        backFirst.setBackground(new Color(12,100, 255));
+        backFirst.addActionListener(this);
+        south.add(backFirst);
+        backFirst.setFocusable(false);
+
+        setVisible(true);
+    }
+
     public  void bookEvent(){
         removeAllComponents();
         setVisible(false);
@@ -819,7 +880,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         } else if (e.getSource() == name) {
             signInPasswd.requestFocus();
         } else if (e.getSource() == backFirst) {
-            eventOptions();
+            userOption();
         } else if (e.getSource() == backToCreate) {
             eventOptions();
         } else if (e.getSource() == finishBooking) {
@@ -996,6 +1057,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
             eventOptions();
             System.out.println("create");
         } else if (e.getSource() == view) {
+            showBookedEvents();
             System.out.println("view");
         } else if (e.getSource() == signOut) {
             signInGui();
