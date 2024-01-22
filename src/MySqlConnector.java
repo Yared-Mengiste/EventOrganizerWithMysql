@@ -30,41 +30,13 @@ public class MySqlConnector extends JFrame {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root", passWord);
-            System.out.println("Success");
+            System.out.println("Successfully connected to database");
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
 
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-    }
-
-    /**
-     *
-     * @param queries a String variable that accepts a query eg 'insert into
-     *                java(id,fname,lname)values(?,?,?)'
-     * @param values  is An array of String that accepts the values of the query's
-     *                rows eg [1, 'Yared', 'Mengiste']
-     */
-    public void add(String queries, String[] values) {
-
-        try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
-                    passWord);
-            pst = conn.prepareStatement(queries);
-            for (int i = 0; i < values.length; i++)
-                pst.setString(i + 1, values[i]);
-            System.out.println("Added");
-
-            pst.executeUpdate();
-            conn.close();
-        }
-
-        catch (SQLException e1) {
-
-            e1.printStackTrace();
-        }
-
     }
 
     /**
@@ -96,25 +68,23 @@ public class MySqlConnector extends JFrame {
                 }
                 model.addRow(rows);
             }
-            System.out.println("success");
+            System.out.println("success showed table table");
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("can't show table");
         }
     }
 
-    public ResultSet giveQuery(String sql) throws SQLException {
-        ResultSet result = null;
-         connect();
+    public ResultSet giveQuery(String sql) {
         try {
-
+            connect();
             PreparedStatement pst = conn.prepareStatement(sql);
-            result = pst.executeQuery();
-            return result;
+            return pst.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return result;
+        return null;
     }
 
 

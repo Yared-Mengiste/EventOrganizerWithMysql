@@ -21,23 +21,24 @@ public class Customer extends Person {
 
     public static ResultSet getCustomer(String fName, String lName, String password, String dataBaseName, String passWord) throws SQLException {
         String sql = "SELECT * FROM customer WHERE first_name = ? AND last_name = ? AND password = ?";
-        ResultSet result = null;
-        Connection conn1 = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
-                passWord);
+
 
         try {
-
+            Connection conn1 = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
+                    passWord);
             PreparedStatement pst = conn1.prepareStatement(sql);
             pst.setString(1, fName);
             pst.setString(2, lName);
             pst.setString(3, password);
 
-            result = pst.executeQuery();
+            ResultSet result = pst.executeQuery();
+            System.out.println("successfully got a result set from customer");
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("can't get a result set from customer");
         }
-        return result;
+        return null;
     }
 
     public void add() {
@@ -54,13 +55,15 @@ public class Customer extends Person {
             pst.setString(6, sex);
 
             pst.executeUpdate();
-            System.out.println("Added");
+            System.out.println("Added to customer table successfully");
             conn.close();
         } catch (SQLException e1) {
-
+            System.out.println("can't add to customer table successfully");
             e1.printStackTrace();
         }
     }
+
+
 
     public void setPwd(String pwd) {
         this.pwd = pwd;

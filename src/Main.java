@@ -42,8 +42,14 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     protected JButton staffSignIn;
     protected JPanel staffSignInContainer;
     protected JRadioButton male,female;
+    protected JTable showGuests;
+    protected JTextField inputEventId, inputFullName;
+    protected JButton enterEventId, enterGuestName;
+    protected JLabel inputEventIdL, inputFullNameL;
     protected ButtonGroup group;
+    protected ArrayList<String> guestList;
     protected NumberFormat currency = NumberFormat.getCurrencyInstance(Locale.US);
+    protected int givenEventId = 0, maxGuests , guestCount, lastGuestId = 0;
 
     /**
      * this constructor accepts
@@ -479,6 +485,65 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
+    public void addGuestsGui(){
+        beginning();
+        center.setLayout(new GridLayout(1,1, 20,10));
+        north.setLayout(new FlowLayout(FlowLayout.TRAILING, 30, 10));
+
+        eventTypeChoice = new JLabel("Add Guests");
+        eventTypeChoice.setForeground(Color.orange);
+        eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
+        north.add(eventTypeChoice);
+
+        inputEventIdL = new JLabel("Event Id ");
+        inputEventIdL.setFont(new Font("Serif", Font.PLAIN, 20));
+        inputEventIdL.setForeground(Color.orange);
+        north.add(inputEventIdL);
+
+        inputEventId = new JTextField(20);
+        inputEventId.setFont(new Font("Serif", Font.PLAIN, 20));
+        inputEventId.setBackground(Color.orange);
+        north.add(inputEventId);
+
+        enterEventId = new JButton("enter");
+        enterEventId.setBackground(new Color(12,100, 255));
+        north.add(enterEventId);
+        enterEventId.addActionListener(this);
+
+        showGuests = new JTable();
+        showGuests.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(new JScrollPane(showGuests));
+
+        inputFullNameL = new JLabel("Guest Full Name ");
+        inputFullNameL.setFont(new Font("Serif", Font.PLAIN, 20));
+        inputFullNameL.setForeground(Color.orange);
+        south.add(inputFullNameL);
+
+        inputFullName = new JTextField(30);
+        inputFullName.setFont(new Font("Serif", Font.PLAIN, 20));
+        inputFullName.setBackground(Color.orange);
+        south.add(inputFullName);
+
+        messageLabel = new JLabel("");
+        messageLabel.setForeground(Color.GREEN);
+        west.add(messageLabel);
+
+        enterGuestName = new JButton("Add");
+        enterGuestName.setBackground(new Color(12,100, 255));
+        enterGuestName.setEnabled(false);
+        south.add(enterGuestName);
+        enterGuestName.addActionListener(this);
+
+        backFirst = new JButton("Back");
+        backFirst.setFont(new Font("Serif", Font.PLAIN, 15));
+        backFirst.setBackground(new Color(12,100, 255));
+        backFirst.addActionListener(this);
+        south.add(backFirst);
+        backFirst.setFocusable(false);
+
+        setVisible(true);
+    }
+
     public  void showBookedEvents(){
         beginning();
 
@@ -491,7 +556,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
         eventInformation = new JTable();
         eventInformation.setFont(new Font("Serif", Font.PLAIN, 20));
-        showTable("select event_name, event_date, type_name, name  from event e join venue v on e.venue_id = v.id" +
+        showTable("select e.id,event_name, event_date, type_name, name  from event e join venue v on e.venue_id = v.id" +
                 " join eventType et on et.id = e.type_id where customer_id ="
                 + customer.getId(), eventInformation);
         eventInformation.setBackground(Color.orange);
@@ -718,7 +783,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
                 try {
                     if (!resultSet.next()) {
-                        name.setText("Incorrect Customer name or password");
+                        messageLabel.setText("No account by that name!!");
                         signInPasswd.setText("");
                     } else {
                         sex = resultSet.getString("sex");
@@ -918,6 +983,107 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                 e1.printStackTrace();
             }
 
+        } else if (e.getSource() == enterEventId) {
+            //todo check weather the
+            try {
+                if (!inputEventId.getText().isBlank()) {
+                    int eventThere = 0;
+                    givenEventId = Integer.parseInt(inputEventId.getText());
+                    try {
+                        connect();
+                        ResultSet resultSet = giveQuery("Select count(*) as count from event where customer_id = " +
+                                customer.getId() + " and id = " + givenEventId);
+                        resultSet.next();
+                        eventThere = resultSet.getInt("count");
+                        System.out.println(eventThere);
+                        if (eventThere != 0) {
+                            resultSet.close();
+                            try {
+                                resultSet = giveQuery("Select * from event where customer_id = " +
+                                        customer.getId() + " and id = " + givenEventId);
+                                resultSet.next();
+                                maxGuests = resultSet.getInt("guest");
+                                messageLabel.setText(String.valueOf(maxGuests));
+                                try {
+                                    resultSet = giveQuery("select count(*) as count from eventGuests where event_id =" + givenEventId);
+                                    resultSet.next();
+                                    guestCount = resultSet.getInt("count");
+                                    showTable("select concat(first_name, ' ', last_name) as 'Guest Name' FROM event JOIN" +
+                                            " eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
+                                            "WHERE customer_id = " + customer.getId() + " and event_id = " + givenEventId, showGuests);
+                                    if (guestCount < maxGuests) {
+                                        guestList = new ArrayList<>();
+                                        try {
+                                            resultSet = giveQuery("select concat(first_name, ' ', last_name) as 'Guest Name'" +
+                                                    " FROM event JOIN eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
+                                                    "WHERE customer_id = " + customer.getId() + " and event_id = " + givenEventId);
+                                            while (resultSet.next()) {
+                                                guestList.add(resultSet.getString("Guest Name"));
+                                            }
+                                            System.out.println(guestList);
+                                        } catch (SQLException e1) {
+                                            e1.printStackTrace();
+                                            System.out.println("failed to add to the guestList!");
+                                        }
+                                        enterGuestName.setEnabled(true);
+                                    } else messageLabel.setText("Guests are fully added");
+                                } catch (SQLException e1) {
+                                    e1.printStackTrace();
+                                    System.out.println("can't show count of eventGuests eid, cid");
+                                }
+                            } catch (SQLException e1) {
+                                e1.printStackTrace();
+                            }
+                        } else messageLabel.setText("No event by that id!!");
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                } else messageLabel.setText("enter number first!!");
+            }catch(NumberFormatException e1){
+                messageLabel.setText("Input number not letter");
+            }
+        } else if (e.getSource() == enterGuestName) {
+            String fullName = inputFullName.getText();
+            if(!fullName.isBlank()){
+                if(checkSpace(fullName)){
+                    try {
+                        ResultSet resultSet = giveQuery("select count(*) as count from guest");
+                        resultSet.next();
+                        try {
+                            if (guestCount < maxGuests) {
+                                String firstName, lastName;
+                                firstName = separateName(fullName).getFirst();
+                                lastName = separateName(fullName).getLast();
+                                if (guestList.contains(firstName + " " + lastName))
+                                    messageLabel.setText("Already added this guest!!");
+                                else {
+                                    Guest newGuest = new Guest(firstName, lastName, dataBaseName, passWord);
+                                    newGuest.add();
+                                    guestList.add(newGuest.getFirstName() +" "+ newGuest.getLastName());
+                                    System.out.println(guestList);
+
+                                    try {
+                                        resultSet = giveQuery("select id from guest order by id desc limit 1");
+                                                resultSet.next();
+                                                newGuest.setId(resultSet.getInt("id"));
+                                        EventGuest.addEventGuest(givenEventId, newGuest.getId(),dataBaseName,passWord);
+                                        showTable("select concat(first_name, ' ', last_name) as 'Guest Name' FROM event JOIN" +
+                                                " eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
+                                                "WHERE customer_id = "+ customer.getId() + " and event_id = " + givenEventId, showGuests);
+                                    }catch (SQLException e1){
+                                        e1.printStackTrace();
+                                        System.out.println("can't get id!!");
+                                    }
+                                }
+                            } else messageLabel.setText("Guests are fully added");
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    }catch (SQLException e2){
+                        e2.printStackTrace();
+                    }
+                }else messageLabel.setText("Input Full Name correctly!!");
+            }else messageLabel.setText("First Add To Full Name!!");
         }
     }
 
@@ -998,6 +1164,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         } else if (e.getSource() == signOut) {
             signInGui();
         } else if (e.getSource() == addGuests) {
+            addGuestsGui();
             System.out.println("guests");
         } else if (e.getSource() == wedding) {
             perPersonPrice = 500;
