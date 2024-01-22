@@ -102,6 +102,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
         // menuBar
         menuBar = new JMenuBar();
+        menuBar.setBackground(Color.orange);
         JMenu staffSignIn = new JMenu("Sign IN");
 
         signInStaff = new JMenuItem("Staff SignIn");
@@ -200,6 +201,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
         // menuBar
         menuBar = new JMenuBar();
+        menuBar.setBackground(Color.orange);
         JMenu staffSignIn = new JMenu("Sign IN");
 
         signInCustomer = new JMenuItem("Customer SignIn");
@@ -281,6 +283,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
         // menuBar
         menuBar = new JMenuBar();
+        menuBar.setBackground(Color.orange);
         JMenu staffSignIn = new JMenu("Sign IN");
 
         signInStaff = new JMenuItem("Staff SignIn");
@@ -312,13 +315,12 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         constraint = frameConstraint(1,0,1,1, 10);
         signInContainer.add(signInL, constraint);
 
-        signUpNameL = new JLabel("  User Name");
+        signUpNameL = new JLabel("  Full Name");
         signUpNameL.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,1, 1, 1, 10);
         signInContainer.add(signUpNameL, constraint);
 
         signUpName = new JTextField(25);
-        signUpName.setText("userName fatherName");
         signUpName.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,2, 2, 1, 10);
         signInContainer.add(signUpName, constraint);
@@ -847,36 +849,43 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         } else if (e.getSource() == signUp) {
             signUpGui();
         } else if(e.getSource() == signUpIn){
-            if(checkPasswordMatch(signUpPasswd.getPassword() , confirm.getPassword()))
+            try {
+                if (checkPasswordMatch(signUpPasswd.getPassword(), confirm.getPassword()))
                     if (signUpPasswd.getPassword().length > 3)
-                        if(checkSpace(signUpName.getText())){
-                String fullName = signUpName.getText();
-                String firstName = separateName(fullName).getFirst(),
-                 lastName = separateName(fullName).getLast(),
-                 tellNo1 = tellNoo1.getText(),
-                tellNo2 = tellNoo2.getText(),
-                sex;
-                if (male.isSelected())
-                    sex = "M";
-                else sex = "F";
-                customer = new Customer(firstName, lastName,tellNo1,tellNo2,dataBaseName,new String(signUpPasswd.getPassword()),
-                        passWord, sex);
-                customer.add();
-                messageLabel.setForeground(Color.green);
-                messageLabel.setText("works up to this");
+                        if (checkSpace(signUpName.getText())) {
+                            int tempTell1 = Integer.parseInt(tellNoo1.getText()),
+                            tempTell2 = Integer.parseInt(tellNoo2.getText());
+                            if (!(tellNoo1.getText().length() > 9 || tellNoo2.getText().length() > 9)) {
+                                String fullName = signUpName.getText();
+                                String firstName = separateName(fullName).getFirst(),
+                                        lastName = separateName(fullName).getLast(),
+                                        tellNo1 = tellNoo1.getText(),
+                                        tellNo2 = tellNoo2.getText(),
+                                        sex;
+                                if (male.isSelected())
+                                    sex = "M";
+                                else sex = "F";
+                                customer = new Customer(firstName, lastName, tellNo1, tellNo2, dataBaseName, new String(signUpPasswd.getPassword()),
+                                        passWord, sex);
+                                customer.add();
+                                messageLabel.setForeground(Color.green);
+                                messageLabel.setText("works up to this");
 
-            }
-            else{
-                messageLabel.setForeground(Color.red);
-                messageLabel.setText("Input full name correctly!!");
+                            } else messageLabel.setText("contact info should be filled");
+                        } else {
+                            messageLabel.setForeground(Color.red);
+                            messageLabel.setText("Input full name correctly!!");
                         }
-            else {
-                messageLabel.setForeground(Color.red);
-                messageLabel.setText("password must be > 3");
+                    else {
+                        messageLabel.setForeground(Color.red);
+                        messageLabel.setText("password must be > 3");
                     }
-            else {
-                messageLabel.setForeground(Color.red);
-                messageLabel.setText("confirm and password aren't equal");
+                else {
+                    messageLabel.setForeground(Color.red);
+                    messageLabel.setText("confirm and password aren't equal");
+                }
+            }catch (NumberFormatException e1){
+                messageLabel.setText("Contact info can only have numbers");
             }
         } else if (e.getSource() == name) {
             signInPasswd.requestFocus();
@@ -975,6 +984,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                         pst = conn.prepareStatement("update staff set event_work = event_work + 1 where staff_id = "
                                 + staff_id);
                         conn.close();
+                        messageLabel.setText("you have  Successfully Booked ");
                     } catch (SQLException e2) {
                         e2.printStackTrace();
                     }
@@ -1188,17 +1198,14 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     public void mousePressed(MouseEvent e) {
 
     }
-
     @Override
     public void mouseReleased(MouseEvent e) {
 
     }
-
     @Override
     public void mouseEntered(MouseEvent e) {
 
     }
-
     @Override
     public void mouseExited(MouseEvent e) {
 
