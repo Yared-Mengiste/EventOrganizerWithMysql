@@ -7,7 +7,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class Main extends MySqlConnector implements ActionListener, KeyListener , MouseListener {
+public class Main extends MySqlConnector implements ActionListener , MouseListener {
 
     protected JLabel userOptionTitle, create, view, addGuests,signOut, showPriceL;
     protected JTable taskedWork;
@@ -55,6 +55,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
             getStaffFullNameInfo, getStaffGender,getStaffPosition,getStaffAppointedDate,getStaffSupervisor;
     protected NumberFormat currency = NumberFormat.getCurrencyInstance(Locale.US);
     protected int givenEventId = 0, maxGuests , guestCount;
+    protected String date;
 
     /**
      * this constructor accepts
@@ -71,13 +72,12 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         getContentPane().setBackground(new Color(101, 1, 1, 255));
         setMinimumSize(new Dimension(900, 500));
 
-        setVisible(true);
+        signInGui();
     }
 
     public static void main(String[] arr){
         try {
             Main m = new Main("event_organizer", "PHW#84#joer");
-            m.signInGui();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -100,10 +100,18 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     /**
      * this is a method that is used to show signIn page of the customer side
      */
-    public void signInGui(){
+    protected void signInGui(){
         removeAllComponents();
         setVisible(false);
         setLayout(new GridBagLayout());
+
+        try{
+            ResultSet resultSet = giveQuery("select curdate() as date;");
+            resultSet.next();
+            date = String.valueOf(resultSet.getDate("date"));
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
 
         // menuBar
         menuBar = new JMenuBar();
@@ -160,6 +168,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         signInPasswd.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,5, 2, 1, 10);
         signInContainer.add(signInPasswd, constraint);
+        signInPasswd.addActionListener(this);
 
         JLabel empty1 = new JLabel(".");
         constraint = frameConstraint(0,6,1,1, 0);
@@ -199,7 +208,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     /**
      * this method is used to Staff sign in
      */
-    public void staffSignInGui(){
+    protected void staffSignInGui(){
         removeAllComponents();
         setVisible(false);
         setLayout(new GridBagLayout());
@@ -240,6 +249,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         staffSignInContainer.add(staffNameL, constraint);
         //staff name text field
         staffName = new JTextField(25);
+        staffName.addActionListener(this);
         staffName.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,2, 2, 1, 10);
         staffSignInContainer.add(staffName, constraint);
@@ -251,6 +261,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         staffSignInContainer.add(staffSignInPasswdL, constraint);
         //staff password passwordField
         staffSignInPasswd = new JPasswordField(25);
+        staffSignInPasswd.addActionListener(this);
         staffSignInPasswd.setEchoChar('*');
         setFont(new Font("Arial", Font.BOLD, 15));
         staffSignInPasswd.setFont(new Font("Arial", Font.BOLD, 15));
@@ -282,7 +293,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
-    public void signUpGui(){
+    protected void signUpGui(){
         removeAllComponents();
         setVisible(false);
         setLayout(new GridBagLayout());
@@ -452,7 +463,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
     }
 
-    public  void staffInformationView(){
+    protected  void staffInformationView(){
         beginning();
         center.setLayout(new GridLayout(6,2, 20,0));
         north.setLayout(new FlowLayout(FlowLayout.TRAILING, 300, 10));
@@ -549,15 +560,8 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         getStaffAppointedDate.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(getStaffAppointedDate);
 
-        String date = "";
 
-        try{
-            ResultSet resultSet = giveQuery("select curdate() as date;");
-            resultSet.next();
-            date = String.valueOf(resultSet.getDate("date"));
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
+
 
         current_date = new JLabel(date);
         current_date.setFont(new Font("Serif", Font.PLAIN, 15));
@@ -573,7 +577,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
-    public  void viewAssignedWork(){
+    protected   void viewAssignedWork(){
 
         beginning();
 
@@ -608,7 +612,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
-    public  void userOption(){
+    protected void userOption(){
         beginning();
 
         center.setLayout(new GridLayout(4,1));
@@ -650,7 +654,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
-    public void addGuestsGui(){
+    protected void addGuestsGui(){
         beginning();
         center.setLayout(new GridLayout(1,1, 20,10));
         north.setLayout(new FlowLayout(FlowLayout.TRAILING, 30, 10));
@@ -666,6 +670,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         north.add(inputEventIdL);
 
         inputEventId = new JTextField(20);
+        inputEventId.addActionListener(this);
         inputEventId.setFont(new Font("Serif", Font.PLAIN, 20));
         inputEventId.setBackground(Color.orange);
         north.add(inputEventId);
@@ -674,6 +679,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         enterEventId.setBackground(new Color(12,100, 255));
         north.add(enterEventId);
         enterEventId.addActionListener(this);
+        enterEventId.setFocusable(false);
 
         showGuests = new JTable();
         showGuests.setFont(new Font("Serif", Font.PLAIN, 20));
@@ -687,6 +693,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         inputFullName = new JTextField(30);
         inputFullName.setFont(new Font("Serif", Font.PLAIN, 20));
         inputFullName.setBackground(Color.orange);
+        inputFullName.addActionListener(this);
         south.add(inputFullName);
 
         messageLabel = new JLabel("");
@@ -698,6 +705,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         enterGuestName.setEnabled(false);
         south.add(enterGuestName);
         enterGuestName.addActionListener(this);
+        enterGuestName.setFocusable(false);
 
         backFirst = new JButton("Back");
         backFirst.setFont(new Font("Serif", Font.PLAIN, 15));
@@ -709,7 +717,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
-    public  void assignedTask(){
+    protected   void assignedTask(){
         beginning();
 
         south.setLayout(new FlowLayout(FlowLayout.TRAILING, 20,20));
@@ -741,7 +749,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
-    public  void showBookedEvents(){
+    protected  void showBookedEvents(){
         beginning();
 
         center.setLayout(new GridLayout(2,1));
@@ -778,15 +786,22 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
-    public  void bookEvent(){
+    protected   void bookEvent(){
         beginning();
 
+        north.setLayout(new FlowLayout(FlowLayout.TRAILING, 300, 10));
         center.setLayout(new GridLayout(11,1));
 
         eventTypeChoice = new JLabel("Fill The Form");
         eventTypeChoice.setForeground(Color.orange);
         eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
         north.add(eventTypeChoice);
+
+        current_date = new JLabel(date);
+        current_date.setFont(new Font("Serif", Font.PLAIN, 15));
+        current_date.setForeground(Color.orange);
+        north.add(current_date);
+
 
         eventNameL = new JLabel("Event Name");
         eventNameL.setFont(new Font("Serif", Font.PLAIN, 25));
@@ -833,7 +848,8 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         center.add(venueList);
 
         try {
-            ResultSet eventResult = giveQuery("SELECT CONCAT(id , \".\", name, \" max \", capacity, ' $', price), price, id from venue");
+            ResultSet eventResult = giveQuery("SELECT CONCAT(id , \".\", name, \" max \", capacity, ' $', price)," +
+                    " price, id from venue");
             venuePrice = new ArrayList<>();
             venueId = new ArrayList<>();
             while (eventResult.next()){
@@ -889,7 +905,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         setVisible(true);
     }
 
-    public  void eventOptions(){
+    protected   void eventOptions(){
         beginning();
 
         center.setLayout(new GridLayout(3,1));
@@ -932,24 +948,9 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         south.add(backFirst);
         backFirst.setFocusable(false);
 
-
         setVisible(true);
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-        
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -958,131 +959,13 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         } else if (e.getSource() == signInCustomer) {
             signInGui();
         } else if (e.getSource() == signIn) {
-            String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, sex;
-            int id;
-            ResultSet resultSet;
-            fullName = name.getText();
-            System.out.println(fullName);
-            if (checkSpace(fullName))
-                if(signInPasswd.getPassword().length > 3) {
-                ArrayList<String> separatedName = separateName(fullName);
-                fName = separatedName.getFirst();
-                System.out.println(fName);
-                lName = separatedName.getLast();
-                System.out.println(lName);
-                userPassword = new String(signInPasswd.getPassword());
-                System.out.println(userPassword);
-                try {
-                    resultSet = Customer.getCustomer(fName, lName, userPassword, dataBaseName, passWord);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-                try {
-                    if (!resultSet.next()) {
-                        messageLabel.setText("No account by that name!!");
-                        signInPasswd.setText("");
-                    } else {
-                        sex = resultSet.getString("sex");
-                        phoneNo1 = resultSet.getString("tellNo1");
-                        phoneNo2 = resultSet.getString("tellNo2");
-                        id = resultSet.getInt("id");
-                        customer = new Customer(fName, lName, phoneNo1, phoneNo2, dataBaseName, passWord, userPassword, sex);
-                        customer.setId(id);
-                        userOption();
-                    }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-            } else messageLabel.setText("Password is > 3!!");
-            else messageLabel.setText("User Name is up to father name!");
-
+            pressedSignIn();
         }else if (e.getSource() == staffSignIn) {
-            String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, dob, sex, appointedDate;
-            int id, positionId, supervisorId;
-            ResultSet resultSet;
-            fullName = staffName.getText();
-            System.out.println(fullName);
-            if (checkSpace(fullName) )
-                if(staffSignInPasswd.getPassword().length > 3) {
-                ArrayList<String> separatedName = separateName(fullName);
-                fName = separatedName.getFirst();
-                System.out.println(fName);
-                lName = separatedName.getLast();
-                System.out.println(lName);
-                userPassword = new String(staffSignInPasswd.getPassword());
-                System.out.println(userPassword);
-                try {
-                    resultSet = Staff.getStaff(fName, lName, userPassword, dataBaseName, passWord);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-                try {
-                    if (!resultSet.next()) {
-                        messageLabel.setText("Unknown Staff name or password");
-                        staffSignInPasswd.setText("");
-                    } else {
-                        id = resultSet.getInt("id");
-                        positionId = resultSet.getInt("position_id");
-                        supervisorId = resultSet.getInt("supervisor_id");
-                        dob = resultSet.getString("DOB");
-                        sex = resultSet.getString("sex");
-                        phoneNo1 = resultSet.getString("tellNo1");
-                        phoneNo2 = resultSet.getString("tellNo2");
-                        appointedDate = String.valueOf(resultSet.getDate("appointed_date"));
-                        staff = new Staff(fName, lName,phoneNo1,phoneNo2,sex,dataBaseName,dob,passWord,appointedDate
-                                ,userPassword,supervisorId,positionId);
-                        staff.setId(id);
-                        viewAssignedWork();
-                    }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }else messageLabel.setText("Password is > 3!!");
-            else messageLabel.setText("User Name is up to father name!");
-
+            pressedStaffSignIn();
         } else if (e.getSource() == signUp) {
             signUpGui();
         } else if(e.getSource() == signUpIn){
-            try {
-                if (checkPasswordMatch(signUpPasswd.getPassword(), confirm.getPassword()))
-                    if (signUpPasswd.getPassword().length > 3)
-                        if (checkSpace(signUpName.getText())) {
-                            int tempTell1 = Integer.parseInt(tellNoo1.getText()),
-                            tempTell2 = Integer.parseInt(tellNoo2.getText());
-                            if (!(tellNoo1.getText().length() > 9 || tellNoo2.getText().length() > 9)) {
-                                String fullName = signUpName.getText();
-                                String firstName = separateName(fullName).getFirst(),
-                                        lastName = separateName(fullName).getLast(),
-                                        tellNo1 = tellNoo1.getText(),
-                                        tellNo2 = tellNoo2.getText(),
-                                        sex;
-                                if (male.isSelected())
-                                    sex = "M";
-                                else sex = "F";
-                                customer = new Customer(firstName, lastName, tellNo1, tellNo2, dataBaseName, new String(signUpPasswd.getPassword()),
-                                        passWord, sex);
-                                customer.add();
-                                messageLabel.setForeground(Color.green);
-                                messageLabel.setText("works up to this");
-
-                            } else messageLabel.setText("contact info should be filled");
-                        } else {
-                            messageLabel.setForeground(Color.red);
-                            messageLabel.setText("Name is up to father name!!");
-                        }
-                    else {
-                        messageLabel.setForeground(Color.red);
-                        messageLabel.setText("password must be > 3");
-                    }
-                else {
-                    messageLabel.setForeground(Color.red);
-                    messageLabel.setText("confirm and password aren't equal");
-                }
-            }catch (NumberFormatException e1){
-                messageLabel.setText("Contact info can only have numbers");
-            }
+            pressedSignUp();
         } else if (e.getSource() == name) {
             signInPasswd.requestFocus();
         } else if (e.getSource() == backFirst) {
@@ -1090,208 +973,25 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         } else if (e.getSource() == backToCreate) {
             eventOptions();
         } else if (e.getSource() == finishBooking) {
-            try {
-                int gustCheck = Integer.parseInt(guestNo.getText());
-                if (gustCheck > 20 ) {
-                    if(eventDate.getText().charAt(4) == '-' && eventDate.getText().charAt(7) == '-') {
-                        if (!eventNameT.getText().isBlank()) {
-                            if (!endTime.getText().isBlank()) {
-                                if (!startTime.getText().isBlank()) {
-                                    int selected = venueList.getSelectedIndex();
-                                    if (!(selected == -1)) {
-                                        double sPrice = (venuePrice.get(venueList.getSelectedIndex()) +
-                                                Integer.parseInt(guestNo.getText()) * perPersonPrice);
-                                        String giveFormula = currency.format(venuePrice.get(venueList.getSelectedIndex())) + " + " +
-                                                "(" + currency.format(perPersonPrice) + " * " + guestNo.getText() + ")";
-                                        messageLabel.setText(giveFormula);
-                                        showPrice.setText(String.valueOf(currency.format(venuePrice.get(venueList.getSelectedIndex()) +
-                                                Integer.parseInt(guestNo.getText()) * perPersonPrice)));
-                                        confirmBooking.setEnabled(true);
-                                    } else messageLabel.setText(" first Choose a Venue!!");
-                                } else messageLabel.setText("Start time can't be empty!!");
-                            } else messageLabel.setText("End Time can't be empty!!");
-                        } else messageLabel.setText("Event Name can't be empty!!");
-                    }else messageLabel.setText("Date format yyyy-MM-dd");
-                } else messageLabel.setText("Guest No should be > 20");
-            }catch (NumberFormatException e1){
-                messageLabel.setText("No Guests can be only no");
-            }
+            pressedFinishBooking();
         } else if (e.getSource() == confirmBooking) {
-            int staff_id = 0, dateCheck = 0;
-            event.setEventName(eventNameT.getText().toUpperCase());
-            event.setGuests(Integer.parseInt(guestNo.getText()));
-            event.setEventDate(eventDate.getText());
-            event.setStartTime(startTime.getText());
-            event.setEndTime(endTime.getText());
-            event.setEventCost((venuePrice.get(venueList.getSelectedIndex()) + Integer.parseInt(guestNo.getText()) * perPersonPrice));
-            event.setVenueId(venueId.get(venueList.getSelectedIndex()));
-            event.setCustomerId(customer.getId());
-            event.setId();
-            System.out.println(event.getId());
-            //todo check date
-            try {
-                connect();
-                //should use a single quotation to notify the event_date is a date
-                ResultSet resultSet = giveQuery("select  count(*) as count from event where event_date = '" +
-                        event.getEventDate() + "' and venue_id = " + event.getVenueId());
-                while (resultSet.next()) {
-                    dateCheck = resultSet.getInt("count");
-                    System.out.println(dateCheck);
-                }
-                conn.close();
-                if (dateCheck == 0) {
-                    event.addEvent();
-                    //todo add event id and staff id
-                    try {
-                        ResultSet eventResult = giveQuery("SELECT * from staff where position_id = " + event.getTypeId() +
-                                " ORDER BY event_work DESC LIMIT 1");
-                        while (eventResult.next()) {
-                            staff_id = eventResult.getInt("id");
-                            System.out.println(staff_id);
-                        }
-                        eventResult.close();
-                        try {
-                            connect();
-                            pst = conn.prepareStatement("UPDATE staff SET event_work = event_work + 1 WHERE id = ?");
-                            pst.setInt(1, staff_id);
-                            pst.executeUpdate();
-                            conn.close();
-                        } catch (SQLException e2) {
-                            e2.printStackTrace();
-                        }
-                        //todo add staff_id and event_id to eventStaff
-                        try {
-                            connect();
-                            pst = conn.prepareStatement("INSERT INTO eventStaff(event_id, staff_id) VALUES (?, ?)");
-                            pst.setInt(1, event.getId());
-                            pst.setInt(2, staff_id);
-                            pst.executeUpdate();
-                            System.out.println("Recorded is added to eventStaff");
-                            conn.close();
-                        } catch (SQLException e1) {
-                            e1.printStackTrace();
-                        }
-                    } catch (SQLException e1) {
-                        e1.printStackTrace();
-                    }
-                    //todo change event_work by one
-                    try {
-                        connect();
-                        pst = conn.prepareStatement("update staff set event_work = event_work + 1 where staff_id = "
-                                + staff_id);
-                        conn.close();
-                        messageLabel.setText("you have  Successfully Booked ");
-                    } catch (SQLException e2) {
-                        e2.printStackTrace();
-                    }
-                }else messageLabel.setText("The Date is Booked!!");
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-
+            pressedConfirmBooking();
         } else if (e.getSource() == enterEventId) {
-            //todo check weather the
-            try {
-                if (!inputEventId.getText().isBlank()) {
-                    int eventThere = 0;
-                    givenEventId = Integer.parseInt(inputEventId.getText());
-                    try {
-                        connect();
-                        ResultSet resultSet = giveQuery("Select count(*) as count from event where customer_id = " +
-                                customer.getId() + " and id = " + givenEventId);
-                        resultSet.next();
-                        eventThere = resultSet.getInt("count");
-                        System.out.println(eventThere);
-                        if (eventThere != 0) {
-                            resultSet.close();
-                            try {
-                                resultSet = giveQuery("Select * from event where customer_id = " +
-                                        customer.getId() + " and id = " + givenEventId);
-                                resultSet.next();
-                                maxGuests = resultSet.getInt("guest");
-                                messageLabel.setText(String.valueOf(maxGuests));
-                                try {
-                                    resultSet = giveQuery("select count(*) as count from eventGuests where event_id =" + givenEventId);
-                                    resultSet.next();
-                                    guestCount = resultSet.getInt("count");
-                                    showTable("select concat(first_name, ' ', last_name) as 'Guest Name' FROM event JOIN" +
-                                            " eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
-                                            "WHERE customer_id = " + customer.getId() + " and event_id = " + givenEventId, showGuests);
-                                    if (guestCount < maxGuests) {
-                                        guestList = new ArrayList<>();
-                                        try {
-                                            resultSet = giveQuery("select concat(first_name, ' ', last_name) as 'Guest Name'" +
-                                                    " FROM event JOIN eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
-                                                    "WHERE customer_id = " + customer.getId() + " and event_id = " + givenEventId);
-                                            while (resultSet.next()) {
-                                                guestList.add(resultSet.getString("Guest Name"));
-                                            }
-                                            System.out.println(guestList);
-                                        } catch (SQLException e1) {
-                                            e1.printStackTrace();
-                                            System.out.println("failed to add to the guestList!");
-                                        }
-                                        enterGuestName.setEnabled(true);
-                                    } else messageLabel.setText("Guests are fully added");
-                                } catch (SQLException e1) {
-                                    e1.printStackTrace();
-                                    System.out.println("can't show count of eventGuests eid, cid");
-                                }
-                            } catch (SQLException e1) {
-                                e1.printStackTrace();
-                            }
-                        } else messageLabel.setText("No event by that id!!");
-                    } catch (SQLException e1) {
-                        e1.printStackTrace();
-                    }
-                } else messageLabel.setText("enter number first!!");
-            }catch(NumberFormatException e1){
-                messageLabel.setText("Input number not letter");
-            }
+            pressedEnterEventId();
         } else if (e.getSource() == enterGuestName) {
-            String fullName = inputFullName.getText();
-            if(!fullName.isBlank()){
-                if(checkSpace(fullName)){
-                    try {
-                        ResultSet resultSet = giveQuery("select count(*) as count from guest");
-                        resultSet.next();
-                        try {
-                            if (guestCount < maxGuests) {
-                                String firstName, lastName;
-                                firstName = separateName(fullName).getFirst();
-                                lastName = separateName(fullName).getLast();
-                                if (guestList.contains(firstName + " " + lastName))
-                                    messageLabel.setText("Already added this guest!!");
-                                else {
-                                    Guest newGuest = new Guest(firstName, lastName, dataBaseName, passWord);
-                                    newGuest.add();
-                                    guestList.add(newGuest.getFirstName() +" "+ newGuest.getLastName());
-                                    System.out.println(guestList);
-
-                                    try {
-                                        resultSet = giveQuery("select id from guest order by id desc limit 1");
-                                                resultSet.next();
-                                                newGuest.setId(resultSet.getInt("id"));
-                                        EventGuest.addEventGuest(givenEventId, newGuest.getId(),dataBaseName,passWord);
-                                        showTable("select concat(first_name, ' ', last_name) as 'Guest Name' FROM event JOIN" +
-                                                " eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
-                                                "WHERE customer_id = "+ customer.getId() + " and event_id = " + givenEventId, showGuests);
-                                    }catch (SQLException e1){
-                                        e1.printStackTrace();
-                                        System.out.println("can't get id!!");
-                                    }
-                                }
-                            } else messageLabel.setText("Guests are fully added");
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }catch (SQLException e2){
-                        e2.printStackTrace();
-                    }
-                }else messageLabel.setText("Full name is up to father name!!");
-            }else messageLabel.setText("First Add To Full Name!!");
-        } else if (e.getSource() == gotoStaffFirst) {
+            pressedAddGuestName();
+        }else if (e.getSource() == gotoStaffFirst) {
             viewAssignedWork();
+        } else if (e.getSource() == signInPasswd) {
+            pressedSignIn();
+        } else if (e.getSource() == inputEventId) {
+            pressedEnterEventId();
+        } else if (e.getSource() == inputFullName) {
+            pressedAddGuestName();
+        } else if (e.getSource() == staffName) {
+            staffSignInPasswd.requestFocus();
+        } else if (e.getSource() == staffSignInPasswd) {
+            pressedStaffSignIn();
         }
     }
 
@@ -1409,6 +1109,401 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         }
     }
 
+    /**
+     * this method compares if a given date is greater than a given date at least by 10 days
+     * @param cDate current date in yyyy-MM-dd form
+     * @param sDate the date to compare to the current date
+     * @return true if it is greater else false
+     */
+    public boolean compareDate(String cDate, String sDate){
+        boolean year = Integer.parseInt(sDate.substring(0,4)) > Integer.parseInt(cDate.substring(0,4));
+        boolean yearE = Integer.parseInt(sDate.substring(0,4)) == Integer.parseInt(cDate.substring(0,4));
+        boolean month = Integer.parseInt(sDate.substring(5,7)) > Integer.parseInt(cDate.substring(5,7));
+        boolean monthE = Integer.parseInt(sDate.substring(5,7)) == Integer.parseInt(cDate.substring(5,7));
+        boolean day = Integer.parseInt(sDate.substring(8)) >= Integer.parseInt(cDate.substring(8) + 10);
+            if (year)
+                return true;
+            else if (yearE && month)
+                return true;
+            else if (yearE && monthE)
+                return day;
+            return false;
+    }
+    private void pressedSignIn(){
+        String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, sex;
+        int id;
+        ResultSet resultSet;
+        fullName = name.getText();
+        System.out.println(fullName);
+        if (checkSpace(fullName))
+            if(signInPasswd.getPassword().length > 3) {
+                ArrayList<String> separatedName = separateName(fullName);
+                fName = separatedName.getFirst();
+                System.out.println(fName);
+                lName = separatedName.getLast();
+                System.out.println(lName);
+                userPassword = new String(signInPasswd.getPassword());
+                System.out.println(userPassword);
+                try {
+                    resultSet = Customer.getCustomer(fName, lName, userPassword, dataBaseName, passWord);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                try {
+                    if (!resultSet.next()) {
+                        messageLabel.setText("No account by that name!!");
+                        signInPasswd.setText("");
+                    } else {
+                        sex = resultSet.getString("sex");
+                        phoneNo1 = resultSet.getString("tellNo1");
+                        phoneNo2 = resultSet.getString("tellNo2");
+                        id = resultSet.getInt("id");
+                        customer = new Customer(fName, lName, phoneNo1, phoneNo2, dataBaseName, passWord, userPassword, sex);
+                        customer.setId(id);
+                        userOption();
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else messageLabel.setText("Password is > 3!!");
+        else messageLabel.setText("User Name is up to father name!");
+
+    }
+
+    public void pressedStaffSignIn(){
+        String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, dob, sex, appointedDate;
+        int id, positionId, supervisorId;
+        ResultSet resultSet;
+        fullName = staffName.getText();
+        System.out.println(fullName);
+        if (checkSpace(fullName) )
+            if(staffSignInPasswd.getPassword().length > 3) {
+                ArrayList<String> separatedName = separateName(fullName);
+                fName = separatedName.getFirst();
+                System.out.println(fName);
+                lName = separatedName.getLast();
+                System.out.println(lName);
+                userPassword = new String(staffSignInPasswd.getPassword());
+                System.out.println(userPassword);
+                try {
+                    resultSet = Staff.getStaff(fName, lName, userPassword, dataBaseName, passWord);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                try {
+                    if (!resultSet.next()) {
+                        messageLabel.setText("Unknown Staff name or password");
+                        staffSignInPasswd.setText("");
+                    } else {
+                        id = resultSet.getInt("id");
+                        positionId = resultSet.getInt("position_id");
+                        supervisorId = resultSet.getInt("supervisor_id");
+                        dob = resultSet.getString("DOB");
+                        sex = resultSet.getString("sex");
+                        phoneNo1 = resultSet.getString("tellNo1");
+                        phoneNo2 = resultSet.getString("tellNo2");
+                        appointedDate = String.valueOf(resultSet.getDate("appointed_date"));
+                        staff = new Staff(fName, lName,phoneNo1,phoneNo2,sex,dataBaseName,dob,passWord,appointedDate
+                                ,userPassword,supervisorId,positionId);
+                        staff.setId(id);
+                        viewAssignedWork();
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }else messageLabel.setText("Password is > 3!!");
+        else messageLabel.setText("User Name is up to father name!");
+
+    }
+
+    public void pressedSignUp(){
+        try {
+            if (checkPasswordMatch(signUpPasswd.getPassword(), confirm.getPassword()))
+                if (signUpPasswd.getPassword().length > 3)
+                    if (checkSpace(signUpName.getText())) {
+                        int tempTell1 = Integer.parseInt(tellNoo1.getText()),
+                                tempTell2 = Integer.parseInt(tellNoo2.getText());
+                        if (!(tellNoo1.getText().length() > 9 || tellNoo2.getText().length() > 9)) {
+                            String fullName = signUpName.getText();
+                            String firstName = separateName(fullName).getFirst(),
+                                    lastName = separateName(fullName).getLast(),
+                                    tellNo1 = tellNoo1.getText(),
+                                    tellNo2 = tellNoo2.getText(),
+                                    sex;
+                            if (male.isSelected())
+                                sex = "M";
+                            else sex = "F";
+                            customer = new Customer(firstName, lastName, tellNo1, tellNo2, dataBaseName, new String(signUpPasswd.getPassword()),
+                                    passWord, sex);
+                            customer.add();
+                            messageLabel.setForeground(Color.green);
+                            messageLabel.setText("works up to this");
+
+                        } else messageLabel.setText("contact info should be filled");
+                    } else {
+                        messageLabel.setForeground(Color.red);
+                        messageLabel.setText("Name is up to father name!!");
+                    }
+                else {
+                    messageLabel.setForeground(Color.red);
+                    messageLabel.setText("password must be > 3");
+                }
+            else {
+                messageLabel.setForeground(Color.red);
+                messageLabel.setText("confirm and password aren't equal");
+            }
+        }catch (NumberFormatException e1){
+            messageLabel.setText("Contact info can only have numbers");
+        }
+    }
+
+    public void pressedFinishBooking() {
+        try {
+            int eventDay = Integer.parseInt(eventDate.getText().substring(8));
+            int eventMonth = Integer.parseInt(eventDate.getText().substring(5, 7));
+            int eventYear = Integer.parseInt(eventDate.getText().substring(0, 4));
+            int gustCheck = Integer.parseInt(guestNo.getText());
+            System.out.println(eventDay);
+            System.out.println(eventMonth);
+            System.out.println(eventYear);
+            if(eventMonth < 13){
+                System.out.println(eventMonth);
+            if (eventDay < 31) {
+                if (gustCheck > 20) {
+                    if (eventDate.getText().charAt(4) == '-' && eventDate.getText().charAt(7) == '-') {
+                        if(compareDate(date, eventDate.getText())) {
+                            if (!eventNameT.getText().isBlank()) {
+                                if (!endTime.getText().isBlank()) {
+                                    if (!startTime.getText().isBlank()) {
+                                        int selected = venueList.getSelectedIndex();
+                                        if (!(selected == -1)) {
+                                            double sPrice = (venuePrice.get(venueList.getSelectedIndex()) +
+                                                    Integer.parseInt(guestNo.getText()) * perPersonPrice);
+                                            String giveFormula = currency.format(venuePrice.get(venueList.getSelectedIndex())) + " + " +
+                                                    "(" + currency.format(perPersonPrice) + " * " + guestNo.getText() + ")";
+                                            messageLabel.setText(giveFormula);
+                                            showPrice.setText(String.valueOf(currency.format(venuePrice.get(venueList.getSelectedIndex()) +
+                                                    Integer.parseInt(guestNo.getText()) * perPersonPrice)));
+                                            confirmBooking.setEnabled(true);
+                                        } else messageLabel.setText(" first Choose a Venue!!");
+                                    } else messageLabel.setText("Start time can't be empty!!");
+                                } else messageLabel.setText("End Time can't be empty!!");
+                            } else messageLabel.setText("Event Name can't be empty!!");
+                        } else messageLabel.setText("Date at least must be 10 days greater today");
+                    } else messageLabel.setText("Date format yyyy-MM-dd");
+                } else messageLabel.setText("Guest No should be > 20");
+            }else messageLabel.setText("Check the date");
+        }else messageLabel.setText("Check Month");
+        }catch (NumberFormatException e1){
+            messageLabel.setText("No Guests can be only no");
+        }
+    }
+
+    public void pressedConfirmBooking(){
+        double givenMoney;
+        double eventCost = (venuePrice.get(venueList.getSelectedIndex()) + Integer.parseInt(guestNo.getText()) * perPersonPrice);
+        if(showPrice.getText().equals(currency.format(eventCost))){
+        try {
+            String money = showPrice.getText().trim();
+            if (money.isBlank()) {
+                messageLabel.setText("Input Price!!");
+                showPrice.setText(currency.format(event.getEventCost()));
+                return;
+            }
+            else {
+                if (money.charAt(0) == '$')
+                    givenMoney = Double.parseDouble(money.substring(1));
+                else
+                    givenMoney = Double.parseDouble(money);
+
+            }
+            if(givenMoney >= eventCost) {
+                int staff_id = 0, dateCheck = 0;
+                event.setEventName(eventNameT.getText().toUpperCase());
+                event.setGuests(Integer.parseInt(guestNo.getText()));
+                event.setEventDate(eventDate.getText());
+                event.setStartTime(startTime.getText());
+                event.setEndTime(endTime.getText());
+                event.setEventCost((venuePrice.get(venueList.getSelectedIndex()) + Integer.parseInt(guestNo.getText()) * perPersonPrice));
+                event.setVenueId(venueId.get(venueList.getSelectedIndex()));
+                event.setCustomerId(customer.getId());
+                event.setId();
+                System.out.println(event.getId());
+                //todo check date
+                try {
+                    connect();
+                    //should use a single quotation to notify the event_date is a date
+                    ResultSet resultSet = giveQuery("select  count(*) as count from event where event_date = '" +
+                            event.getEventDate() + "' and venue_id = " + event.getVenueId());
+                    while (resultSet.next()) {
+                        dateCheck = resultSet.getInt("count");
+                        System.out.println(dateCheck);
+                    }
+                    conn.close();
+                    if (dateCheck == 0) {
+                        event.addEvent();
+                        //todo add event id and staff id
+                        try {
+                            ResultSet eventResult = giveQuery("SELECT * from staff where position_id = " + event.getTypeId() +
+                                    " ORDER BY event_work DESC LIMIT 1");
+                            while (eventResult.next()) {
+                                staff_id = eventResult.getInt("id");
+                                System.out.println(staff_id);
+                            }
+                            eventResult.close();
+                            try {
+                                connect();
+                                pst = conn.prepareStatement("UPDATE staff SET event_work = event_work + 1 WHERE id = ?");
+                                pst.setInt(1, staff_id);
+                                pst.executeUpdate();
+                                conn.close();
+                            } catch (SQLException e2) {
+                                e2.printStackTrace();
+                            }
+                            //todo add staff_id and event_id to eventStaff
+                            try {
+                                connect();
+                                pst = conn.prepareStatement("INSERT INTO eventStaff(event_id, staff_id) VALUES (?, ?)");
+                                pst.setInt(1, event.getId());
+                                pst.setInt(2, staff_id);
+                                pst.executeUpdate();
+                                System.out.println("Recorded is added to eventStaff");
+                                conn.close();
+                            } catch (SQLException e1) {
+                                e1.printStackTrace();
+                            }
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
+                        }
+                        //todo change event_work by one
+                        try {
+                            connect();
+                            pst = conn.prepareStatement("update staff set event_work = event_work + 1 where staff_id = "
+                                    + staff_id);
+                            conn.close();
+                            messageLabel.setText("you have  Successfully Booked ");
+                            showPrice.setText(currency.format(givenMoney - event.getEventCost()) + " return");
+                        } catch (SQLException e2) {
+                            e2.printStackTrace();
+                        }
+                    } else messageLabel.setText("The Date is Booked!!");
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }else {
+                showPrice.setText(currency.format(eventCost - givenMoney) + " less");
+            }
+        }catch (NumberFormatException e1){
+            messageLabel.setText("Input Only numbers");
+        }
+        }
+
+    }
+    public void pressedEnterEventId(){
+        //todo check weather the
+        try {
+            if (!inputEventId.getText().isBlank()) {
+                int eventThere = 0;
+                givenEventId = Integer.parseInt(inputEventId.getText());
+                try {
+                    connect();
+                    ResultSet resultSet = giveQuery("Select count(*) as count from event where customer_id = " +
+                            customer.getId() + " and id = " + givenEventId);
+                    resultSet.next();
+                    eventThere = resultSet.getInt("count");
+                    System.out.println(eventThere);
+                    if (eventThere != 0) {
+                        resultSet.close();
+                        try {
+                            resultSet = giveQuery("Select * from event where customer_id = " +
+                                    customer.getId() + " and id = " + givenEventId);
+                            resultSet.next();
+                            maxGuests = resultSet.getInt("guest");
+                            messageLabel.setText(String.valueOf(maxGuests));
+                            try {
+                                resultSet = giveQuery("select count(*) as count from eventGuests where event_id =" + givenEventId);
+                                resultSet.next();
+                                guestCount = resultSet.getInt("count");
+                                showTable("select concat(first_name, ' ', last_name) as 'Guest Name' FROM event JOIN" +
+                                        " eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
+                                        "WHERE customer_id = " + customer.getId() + " and event_id = " + givenEventId, showGuests);
+                                if (guestCount < maxGuests) {
+                                    guestList = new ArrayList<>();
+                                    try {
+                                        resultSet = giveQuery("select concat(first_name, ' ', last_name) as 'Guest Name'" +
+                                                " FROM event JOIN eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
+                                                "WHERE customer_id = " + customer.getId() + " and event_id = " + givenEventId);
+                                        while (resultSet.next()) {
+                                            guestList.add(resultSet.getString("Guest Name"));
+                                        }
+                                        System.out.println(guestList);
+                                    } catch (SQLException e1) {
+                                        e1.printStackTrace();
+                                        System.out.println("failed to add to the guestList!");
+                                    }
+                                    enterGuestName.setEnabled(true);
+                                } else messageLabel.setText("Guests are fully added");
+                            } catch (SQLException e1) {
+                                e1.printStackTrace();
+                                System.out.println("can't show count of eventGuests eid, cid");
+                            }
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
+                        }
+                    } else messageLabel.setText("No event by that id!!");
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            } else messageLabel.setText("enter number first!!");
+        }catch(NumberFormatException e1){
+            messageLabel.setText("Input number not letter");
+        }
+    }
+    public void pressedAddGuestName(){
+        String fullName = inputFullName.getText();
+        if(!fullName.isBlank()){
+            if(checkSpace(fullName)){
+                try {
+                    ResultSet resultSet = giveQuery("select count(*) as count from guest");
+                    resultSet.next();
+                    try {
+                        if (guestCount < maxGuests) {
+                            String firstName, lastName;
+                            firstName = separateName(fullName).getFirst();
+                            lastName = separateName(fullName).getLast();
+                            if (guestList.contains(firstName + " " + lastName))
+                                messageLabel.setText("Already added this guest!!");
+                            else {
+                                Guest newGuest = new Guest(firstName, lastName, dataBaseName, passWord);
+                                newGuest.add();
+                                guestList.add(newGuest.getFirstName() +" "+ newGuest.getLastName());
+                                System.out.println(guestList);
+
+                                try {
+                                    resultSet = giveQuery("select id from guest order by id desc limit 1");
+                                    resultSet.next();
+                                    newGuest.setId(resultSet.getInt("id"));
+                                    EventGuest.addEventGuest(givenEventId, newGuest.getId(),dataBaseName,passWord);
+                                    showTable("select concat(first_name, ' ', last_name) as 'Guest Name' FROM event JOIN" +
+                                            " eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
+                                            "WHERE customer_id = "+ customer.getId() + " and event_id = " + givenEventId, showGuests);
+                                }catch (SQLException e1){
+                                    e1.printStackTrace();
+                                    System.out.println("can't get id!!");
+                                }
+                            }
+                        } else messageLabel.setText("Guests are fully added");
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }catch (SQLException e2){
+                    e2.printStackTrace();
+                }
+            }else messageLabel.setText("Full name is up to father name!!");
+        }else messageLabel.setText("First Add To Full Name!!");
+    }
     @Override
     public void mousePressed(MouseEvent e) {
 
