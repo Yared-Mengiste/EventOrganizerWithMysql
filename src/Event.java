@@ -1,7 +1,4 @@
-import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Event extends MySqlConnector{
     private int id;
@@ -116,10 +113,11 @@ public class Event extends MySqlConnector{
     public void setId(){
         int event_id = 0;
         try {
-            ResultSet eventResult = giveQuery("SELECT id from event");
+            ResultSet eventResult = giveQuery("    SELECT id from event ORDER BY id DESC LIMIT 1");
             while (eventResult.next()) {
                 event_id = eventResult.getInt(1);
             }
+            System.out.println(event_id);
             eventResult.close();
         } catch (SQLException e1){
             e1.printStackTrace();
@@ -139,8 +137,8 @@ public class Event extends MySqlConnector{
             pst.setInt(2, typeId);
             pst.setInt(3, venueId);
             pst.setDate(4, Date.valueOf(eventDate));//"yyyy-MM-dd" format String
-            pst.setString(5, startTime);
-            pst.setString(6, endTime);
+            pst.setTime(5, Time.valueOf(startTime));
+            pst.setTime(6, Time.valueOf(endTime));
             pst.setInt(7, customerId);
             pst.setInt(8, guests);
             pst.setDouble(9, eventCost);

@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.sql.Time;
 
 public class Guest extends Person{
 

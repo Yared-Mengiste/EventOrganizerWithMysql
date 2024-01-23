@@ -1279,6 +1279,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                                     if (!startTime.getText().isBlank()) {
                                         int selected = venueList.getSelectedIndex();
                                         if (!(selected == -1)) {
+                                            if (checkTime(endTime.getText()) && checkTime(startTime.getText())){
                                             double sPrice = (venuePrice.get(venueList.getSelectedIndex()) +
                                                     Integer.parseInt(guestNo.getText()) * perPersonPrice);
                                             String giveFormula = currency.format(venuePrice.get(venueList.getSelectedIndex())) + " + " +
@@ -1287,11 +1288,12 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                                             showPrice.setText(String.valueOf(currency.format(venuePrice.get(venueList.getSelectedIndex()) +
                                                     Integer.parseInt(guestNo.getText()) * perPersonPrice)));
                                             confirmBooking.setEnabled(true);
+                                            } else messageLabel.setText("Write time in correct form");
                                         } else messageLabel.setText(" first Choose a Venue!!");
                                     } else messageLabel.setText("Start time can't be empty!!");
                                 } else messageLabel.setText("End Time can't be empty!!");
                             } else messageLabel.setText("Event Name can't be empty!!");
-                        } else messageLabel.setText("Date at least must be 10 days greater today");
+                        } else messageLabel.setText("Event Date > current date + 10");
                     } else messageLabel.setText("Date format yyyy-MM-dd");
                 } else messageLabel.setText("Guest No should be > 20");
             }else messageLabel.setText("Check the date");
@@ -1304,28 +1306,30 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
     public void pressedConfirmBooking(){
         double givenMoney;
         double eventCost = (venuePrice.get(venueList.getSelectedIndex()) + Integer.parseInt(guestNo.getText()) * perPersonPrice);
-        if(showPrice.getText().equals(currency.format(eventCost))){
         try {
             String money = showPrice.getText().trim();
-            if (money.isBlank()) {
+            if(showPrice.getText().equals(currency.format(eventCost))){
+                givenMoney = eventCost;
+                System.out.println(showPrice.getText().equals(currency.format(eventCost)));
+            } else if (showPrice.getText().isBlank()) {
                 messageLabel.setText("Input Price!!");
                 showPrice.setText(currency.format(event.getEventCost()));
                 return;
-            }
-            else {
+            }else {
                 if (money.charAt(0) == '$')
                     givenMoney = Double.parseDouble(money.substring(1));
                 else
                     givenMoney = Double.parseDouble(money);
-
             }
+            System.out.println("get here");
             if(givenMoney >= eventCost) {
                 int staff_id = 0, dateCheck = 0;
                 event.setEventName(eventNameT.getText().toUpperCase());
                 event.setGuests(Integer.parseInt(guestNo.getText()));
                 event.setEventDate(eventDate.getText());
-                event.setStartTime(startTime.getText());
-                event.setEndTime(endTime.getText());
+                event.setStartTime(changeTime(startTime.getText()));
+                System.out.println(changeTime(startTime.getText()));
+                event.setEndTime(changeTime(endTime.getText()));
                 event.setEventCost((venuePrice.get(venueList.getSelectedIndex()) + Integer.parseInt(guestNo.getText()) * perPersonPrice));
                 event.setVenueId(venueId.get(venueList.getSelectedIndex()));
                 event.setCustomerId(customer.getId());
@@ -1361,6 +1365,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                                 conn.close();
                             } catch (SQLException e2) {
                                 e2.printStackTrace();
+                                System.out.println("staff updated work + 1");
                             }
                             //todo add staff_id and event_id to eventStaff
                             try {
@@ -1398,8 +1403,6 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         }catch (NumberFormatException e1){
             messageLabel.setText("Input Only numbers");
         }
-        }
-
     }
     public void pressedEnterEventId(){
         //todo check weather the
@@ -1503,6 +1506,39 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                 }
             }else messageLabel.setText("Full name is up to father name!!");
         }else messageLabel.setText("First Add To Full Name!!");
+    }
+
+    public boolean checkTime(String time) {
+        if (time.trim().length() == 8){
+            try {
+                time = time.trim();
+                int hr = Integer.parseInt(time.substring(0, 2));
+                int min = Integer.parseInt(time.substring(3, 5));
+            if(time.charAt(2) == ':')
+              if(hr <= 12) {
+                  if (min < 60){
+                      if (time.charAt(5) == ' ') {
+                          if (time.substring(6).equalsIgnoreCase("am") ||
+                                  time.substring(6).equalsIgnoreCase("pm"))
+                              return true;
+                      }
+                }
+                }
+            } catch (NumberFormatException e1) {
+                return false;
+            }
+            return false;
+    }
+       else return false;
+    }
+
+    public String changeTime(String time){
+      time= time.trim();
+        if (time.substring(6).equalsIgnoreCase("PM")){
+            int hr = Integer.parseInt(time.substring(0,2)) + 12;
+            return hr + time.substring(2, 5) + ":00";
+        }
+        return time.substring(0,5) + ":00";
     }
     @Override
     public void mousePressed(MouseEvent e) {
