@@ -10,9 +10,10 @@ import java.util.Locale;
 public class Main extends MySqlConnector implements ActionListener, KeyListener , MouseListener {
 
     protected JLabel userOptionTitle, create, view, addGuests,signOut, showPriceL;
+    protected JTable taskedWork;
+    protected JLabel current_date;
     protected double perPersonPrice;
     protected JTable eventInformation, organizerInfo;
-
     protected JLabel eventTypeChoice, birthDay, wedding, graduation;
     protected JButton backFirst, finishBooking, confirmBooking;
     protected JLabel eventNameL, guestNoL, eventDateL, startTimeL, endTimeL;
@@ -47,9 +48,13 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
     protected JButton enterEventId, enterGuestName;
     protected JLabel inputEventIdL, inputFullNameL;
     protected ButtonGroup group;
+    protected JLabel assignedWorks, viewInfo, staffSignOut;
     protected ArrayList<String> guestList;
+    protected JButton gotoStaffFirst;
+    protected JLabel staffFullNameInfo, staffGender, staffSupervisor, staffPosition, staffAppointedDate,
+            getStaffFullNameInfo, getStaffGender,getStaffPosition,getStaffAppointedDate,getStaffSupervisor;
     protected NumberFormat currency = NumberFormat.getCurrencyInstance(Locale.US);
-    protected int givenEventId = 0, maxGuests , guestCount, lastGuestId = 0;
+    protected int givenEventId = 0, maxGuests , guestCount;
 
     /**
      * this constructor accepts
@@ -238,6 +243,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         staffName.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,2, 2, 1, 10);
         staffSignInContainer.add(staffName, constraint);
+        staffName.requestFocus();
         //staff password label
         staffSignInPasswdL = new JLabel("  Password");
         staffSignInPasswdL.setFont(new Font("Arial", Font.BOLD, 15));
@@ -270,8 +276,8 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
         messageLabel = new JLabel("");
         messageLabel.setForeground(Color.RED);
-        constraint = frameConstraint(0, 9, 2, 1, 10);
-        signInContainer.add(messageLabel, constraint);
+        constraint = frameConstraint(0, 12, 2, 1, 10);
+        staffSignInContainer.add(messageLabel, constraint);
         //signUp JButton
         setVisible(true);
     }
@@ -445,6 +451,163 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         add(center);
 
     }
+
+    public  void staffInformationView(){
+        beginning();
+        center.setLayout(new GridLayout(6,2, 20,0));
+        north.setLayout(new FlowLayout(FlowLayout.TRAILING, 300, 10));
+        south.setLayout(new FlowLayout(FlowLayout.TRAILING, 20,20));
+
+        eventTypeChoice = new JLabel("Your Information");
+        eventTypeChoice.setForeground(Color.orange);
+        eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
+        north.add(eventTypeChoice);
+
+        staffFullNameInfo = new JLabel("Name ");
+        staffFullNameInfo.setForeground(new Color(101, 1, 1, 255));
+        staffFullNameInfo.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(staffFullNameInfo);
+
+        getStaffFullNameInfo = new JLabel(staff.getFirstName() + " "+ staff.getLastName());
+        getStaffFullNameInfo.setForeground(new Color(101, 1, 1, 255));
+        getStaffFullNameInfo.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(getStaffFullNameInfo);
+
+        staffGender = new JLabel("Gender ");
+        staffGender.setForeground(new Color(101, 1, 1, 255));
+        staffGender.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(staffGender);
+
+        getStaffGender = new JLabel(staff.getSex());
+        getStaffGender.setForeground(new Color(101, 1, 1, 255));
+        getStaffGender.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(getStaffGender);
+
+        staffPosition = new JLabel("Position ");
+        staffPosition.setForeground(new Color(101, 1, 1, 255));
+        staffPosition.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(staffPosition);
+
+        String position = "";
+        double salary = 0;
+        try{
+            ResultSet resultSet = giveQuery("select * from staffPosition where id = " + staff.getPositionId());
+            resultSet.next();
+            position = resultSet.getString("position");
+            salary = resultSet.getDouble("salary");
+        }catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("failed to get position");
+        }
+
+
+
+        getStaffPosition = new JLabel(position);
+        getStaffPosition.setForeground(new Color(101, 1, 1, 255));
+        getStaffPosition.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(getStaffPosition);
+
+        JLabel staffSalary, getStaffSalary;
+        staffSalary = new JLabel("Gender ");
+        staffSalary.setForeground(new Color(101, 1, 1, 255));
+        staffSalary.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(staffSalary);
+
+        getStaffSalary = new JLabel(currency.format(salary));
+        getStaffSalary.setForeground(new Color(101, 1, 1, 255));
+        getStaffSalary.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(getStaffSalary);
+
+        String supervisor = "";
+        try {
+            ResultSet resultSet = giveQuery("select concat(first_name, ' ', last_name) as name from staff where id = "
+                    + staff.getSupervisorId());
+            resultSet.next();
+            supervisor = resultSet.getString("name");
+        }catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("failed to get supervisor name");
+        }
+
+        staffSupervisor = new JLabel("Supervisor ");
+        staffSupervisor.setForeground(new Color(101, 1, 1, 255));
+        staffSupervisor.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(staffSupervisor);
+
+        getStaffSupervisor = new JLabel(supervisor);
+        getStaffSupervisor.setForeground(new Color(101, 1, 1, 255));
+        getStaffSupervisor.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(getStaffSupervisor);
+
+        staffAppointedDate = new JLabel("Appointed Date ");
+        staffAppointedDate.setForeground(new Color(101, 1, 1, 255));
+        staffAppointedDate.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(staffAppointedDate);
+
+        getStaffAppointedDate = new JLabel(staff.getAppointed_date());
+        getStaffAppointedDate.setForeground(new Color(101, 1, 1, 255));
+        getStaffAppointedDate.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(getStaffAppointedDate);
+
+        String date = "";
+
+        try{
+            ResultSet resultSet = giveQuery("select curdate() as date;");
+            resultSet.next();
+            date = String.valueOf(resultSet.getDate("date"));
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
+        current_date = new JLabel(date);
+        current_date.setFont(new Font("Serif", Font.PLAIN, 15));
+        current_date.setForeground(Color.orange);
+        north.add(current_date);
+
+        gotoStaffFirst = new JButton("Back");
+        gotoStaffFirst.setFont(new Font("Serif", Font.PLAIN, 15));
+        gotoStaffFirst.setBackground(new Color(12,100, 255));
+        south.add(gotoStaffFirst);
+        gotoStaffFirst.setFocusable(false);
+
+        setVisible(true);
+    }
+
+    public  void viewAssignedWork(){
+
+        beginning();
+
+        center.setLayout(new GridLayout(3,1, 20,0));
+
+        eventTypeChoice = new JLabel("Welcome " + staff.getFirstName() + " " + staff.getLastName());
+        eventTypeChoice.setForeground(Color.orange);
+        eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
+        north.add(eventTypeChoice);
+
+        assignedWorks = new JLabel("  1. View Assigned Word ");
+        assignedWorks.setFont(new Font("Serif", Font.PLAIN, 40));
+        assignedWorks.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        assignedWorks.setBackground(Color.orange);
+        assignedWorks.addMouseListener(this);
+        center.add(assignedWorks);
+
+        viewInfo = new JLabel("  2. View Personal Info ");
+        viewInfo.setFont(new Font("Serif", Font.PLAIN, 40));
+        viewInfo.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        viewInfo.setBackground(Color.orange);
+        viewInfo.addMouseListener(this);
+        center.add(viewInfo);
+
+        staffSignOut = new JLabel("  3. SignOut ");
+        staffSignOut.setFont(new Font("Serif", Font.PLAIN, 40));
+        staffSignOut.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        staffSignOut.setBackground(Color.orange);
+        staffSignOut.addMouseListener(this);
+        center.add(staffSignOut);
+
+        setVisible(true);
+    }
+
     public  void userOption(){
         beginning();
 
@@ -542,6 +705,38 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
         backFirst.addActionListener(this);
         south.add(backFirst);
         backFirst.setFocusable(false);
+
+        setVisible(true);
+    }
+
+    public  void assignedTask(){
+        beginning();
+
+        south.setLayout(new FlowLayout(FlowLayout.TRAILING, 20,20));
+        center.setLayout(new GridLayout(1,1, 20,0));
+
+        eventTypeChoice = new JLabel("Assigned Tasks");
+        eventTypeChoice.setForeground(Color.orange);
+        eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
+        north.add(eventTypeChoice);
+
+        taskedWork = new JTable();
+        taskedWork.setBackground(Color.orange);
+        taskedWork.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(new JScrollPane(taskedWork));
+
+            showTable("select event_id ,event_name ,venue.name, event_date,guest, CONCAT(customer.first_name, ' '" +
+                    ", customer.last_name) as customer \n,customer.`tellNo1` from staff join eventstaff on staff.id " +
+                    "= eventstaff.staff_id join event on event.id = eventstaff.event_id\njoin venue on event.venue_id =" +
+                    " venue.id Join customer on event.customer_id = customer.id " +
+                    "where staff.id = " + staff.getId(), taskedWork);
+
+        gotoStaffFirst = new JButton("Back");
+        gotoStaffFirst.setFont(new Font("Serif", Font.PLAIN, 15));
+        gotoStaffFirst.setBackground(new Color(12,100, 255));
+        gotoStaffFirst.addActionListener(this);
+        south.add(gotoStaffFirst);
+        gotoStaffFirst.setFocusable(false);
 
         setVisible(true);
     }
@@ -800,10 +995,10 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                     throw new RuntimeException(ex);
                 }
             } else messageLabel.setText("Password is > 3!!");
-            else messageLabel.setText("User Name includes father name!");
+            else messageLabel.setText("User Name is up to father name!");
 
         }else if (e.getSource() == staffSignIn) {
-            String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, dob, sex;
+            String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, dob, sex, appointedDate;
             int id, positionId, supervisorId;
             ResultSet resultSet;
             fullName = staffName.getText();
@@ -825,7 +1020,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
 
                 try {
                     if (!resultSet.next()) {
-                        staffName.setText("Incorrect Customer name or password");
+                        messageLabel.setText("Unknown Staff name or password");
                         staffSignInPasswd.setText("");
                     } else {
                         id = resultSet.getInt("id");
@@ -835,16 +1030,17 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                         sex = resultSet.getString("sex");
                         phoneNo1 = resultSet.getString("tellNo1");
                         phoneNo2 = resultSet.getString("tellNo2");
-                        staff = new Staff(fName, lName,phoneNo1,phoneNo2,sex,dataBaseName,dob,passWord,userPassword
-                                ,supervisorId,positionId);
+                        appointedDate = String.valueOf(resultSet.getDate("appointed_date"));
+                        staff = new Staff(fName, lName,phoneNo1,phoneNo2,sex,dataBaseName,dob,passWord,appointedDate
+                                ,userPassword,supervisorId,positionId);
                         staff.setId(id);
-                        staffName.setText(staff.getDOB());
+                        viewAssignedWork();
                     }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             }else messageLabel.setText("Password is > 3!!");
-            else messageLabel.setText("User Name includes father name!");
+            else messageLabel.setText("User Name is up to father name!");
 
         } else if (e.getSource() == signUp) {
             signUpGui();
@@ -874,7 +1070,7 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                             } else messageLabel.setText("contact info should be filled");
                         } else {
                             messageLabel.setForeground(Color.red);
-                            messageLabel.setText("Input full name correctly!!");
+                            messageLabel.setText("Name is up to father name!!");
                         }
                     else {
                         messageLabel.setForeground(Color.red);
@@ -1092,8 +1288,10 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
                     }catch (SQLException e2){
                         e2.printStackTrace();
                     }
-                }else messageLabel.setText("Input Full Name correctly!!");
+                }else messageLabel.setText("Full name is up to father name!!");
             }else messageLabel.setText("First Add To Full Name!!");
+        } else if (e.getSource() == gotoStaffFirst) {
+            viewAssignedWork();
         }
     }
 
@@ -1133,11 +1331,12 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
      * @return and returns an arrayList of String<> with 2 stings in it
      */
     public ArrayList<String> separateName(String fullName) {
+        fullName = fullName.trim();
         ArrayList<String> separatedName = new ArrayList<>();
         for (int i = 0; i < fullName.length(); i++) {
             if (fullName.charAt(i) == ' ') {
                 separatedName.add(fullName.substring(0, i).toUpperCase());
-                separatedName.add(fullName.substring(i + 1).toUpperCase());
+                separatedName.add(fullName.substring(i + 1).trim().toUpperCase());
             }
 
         }
@@ -1151,10 +1350,18 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
      * @return boolean if it is greater than 2 and have space in between it returns true else false
      */
     public boolean checkSpace(String word) {
-        if (word.length() > 2)
-            for (int i = 1; i < word.length() - 1; i++) {
-                if (word.charAt(i) == ' ')
+        String trimmed = word.trim();
+
+        if (trimmed.length() > 2)
+            for (int i = 0; i < trimmed.length(); i++) {
+                if (trimmed.charAt(i) == ' ') {
+                    for (int j = 0; j < trimmed.substring(i).trim().length(); j++)
+                        if (trimmed.substring(i).trim().charAt(j) == ' ') {
+                            return false;
+                        }
                     return true;
+                }
+
             }
 
         return false;
@@ -1191,6 +1398,14 @@ public class Main extends MySqlConnector implements ActionListener, KeyListener 
             event = new Event(dataBaseName, passWord);
             event.setTypeId(3);
             bookEvent();
+        } else if (e.getSource() == assignedWorks) {
+            //todo create the gui
+            assignedTask();
+        } else if (e.getSource() == viewInfo) {
+            //todo create the gue
+            staffInformationView();
+        } else if (e.getSource() == staffSignOut) {
+            staffSignInGui();
         }
     }
 

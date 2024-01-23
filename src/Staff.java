@@ -3,16 +3,18 @@ import java.sql.*;
 
 public class Staff extends Person {
     private String DOB;
+    private String appointed_date;
     private int supervisorId;
     private String pwd;
     private int positionId;
 
 
-    public Staff(String firstName, String lastName, String phoneNo1, String phoneNo2, String sex,String databaseName
-            ,String DOB, String password,String pwd, int supervisorId, int positionId) {
+    public Staff(String firstName, String lastName, String phoneNo1, String phoneNo2, String sex, String databaseName
+            , String DOB, String password, String appointedDate, String pwd, int supervisorId, int positionId) {
         super(firstName, lastName, phoneNo1, phoneNo2, databaseName, sex, password);
 
         this.DOB = DOB;
+        appointed_date = appointedDate;
         this.supervisorId = supervisorId;
         this.pwd = pwd;
         this.positionId = positionId;
@@ -52,7 +54,7 @@ public class Staff extends Person {
     public void addStaff() {
 
         String sql = "INSERT INTO Staff (first_name, last_name, sex, position_id, DOB, supervisor_id, password," +
-                " tellNo1, tellNo2) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " tellNo1, tellNo2, appointed_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dataBaseName, "root",
@@ -67,12 +69,14 @@ public class Staff extends Person {
             pst.setString(7, pwd);
             pst.setString(8, phoneNo1);
             pst.setString(9, phoneNo2);
+            pst.setDate(10, Date.valueOf(appointed_date));
 
             pst.executeUpdate();
             System.out.println("Record added to Staff table.");
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error adding staff");
         }
     }
     public void setDOB(String DOB) {
@@ -110,5 +114,12 @@ public class Staff extends Person {
         return positionId;
     }
 
+    public String getAppointed_date() {
+        return appointed_date;
     }
+
+    public void setAppointed_date(String appointed_date) {
+        this.appointed_date = appointed_date;
+    }
+}
 
