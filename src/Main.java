@@ -1387,7 +1387,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                         //todo add event id and staff id
                         try {
                             ResultSet eventResult = giveQuery("SELECT * from staff where position_id = " + event.getTypeId() +
-                                    " ORDER BY event_work acs LIMIT 1");
+                                    " ORDER BY event_work asc LIMIT 1");
                             while (eventResult.next()) {
                                 staff_id = eventResult.getInt("id");
                                 System.out.println(staff_id);
