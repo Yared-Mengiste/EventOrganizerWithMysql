@@ -341,6 +341,8 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         signUpName.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,2, 2, 1, 10);
         signInContainer.add(signUpName, constraint);
+        signUpName.requestFocus();
+        signUpName.addActionListener(this); //todo signUpName to tellNoo1
 
         tellNo1L = new JLabel("  Phone 1");
         tellNo1L.setFont(new Font("Arial", Font.BOLD, 15));
@@ -351,6 +353,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         tellNoo1.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,4, 2, 1, 10);
         signInContainer.add(tellNoo1, constraint);
+        tellNoo1.addActionListener(this); //todo tellNoo1 to tellNoo2
 
         tellNo2L = new JLabel("  Phone 2");
         tellNo2L.setFont(new Font("Arial", Font.BOLD, 15));
@@ -360,6 +363,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         tellNoo2 = new JTextField(25);
         tellNoo2.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,6, 2, 1, 10);
+        tellNoo2.addActionListener(this);//todo tellNoo2 to signUpPasswd
         signInContainer.add(tellNoo2, constraint);
 
 //        signInL = new JLabel("SignUN");
@@ -377,6 +381,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         signUpPasswd.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,8, 2, 1, 10);
         signInContainer.add(signUpPasswd, constraint);
+        signUpPasswd.addActionListener(this);//todo signUpPasswd to confirm
 
         JLabel empty1 = new JLabel(".");
         constraint = frameConstraint(0,9,1,1, 0);
@@ -393,6 +398,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         confirm.setFont(new Font("Arial", Font.BOLD, 15));
         constraint = frameConstraint(0,11,2,1, 10);
         signInContainer.add(confirm, constraint);
+        confirm.addActionListener(this);//todo confirm signUp
 
         group = new ButtonGroup();
         male = new JRadioButton("Male");
@@ -810,6 +816,8 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         eventNameT = new JTextField();
         eventNameT.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(eventNameT);
+        eventNameT.requestFocus();
+        eventNameT.addActionListener(this);//todo eventNameT to guestNo
 
         guestNoL = new JLabel("Guest No ");
         guestNoL.setFont(new Font("Serif", Font.PLAIN, 25));
@@ -818,6 +826,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         guestNo = new JTextField();
         guestNo.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(guestNo);
+        guestNo.addActionListener(this);//todo guestNO to eventDate
 
         eventDateL = new JLabel("Event Date yyyy-MM-dd");
         eventDateL.setFont(new Font("Serif", Font.PLAIN, 25));
@@ -826,6 +835,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         eventDate = new JTextField();
         eventDate.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(eventDate);
+        eventDate.addActionListener(this);//todo eventDate to startTime
 
         startTimeL = new JLabel("Start Time 00:00 pm/am format");
         startTimeL.setFont(new Font("Serif", Font.PLAIN, 25));
@@ -833,6 +843,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
 
         startTime = new JTextField();
         startTime.setFont(new Font("Serif", Font.PLAIN, 20));
+        startTime.addActionListener(this);//todo startTime to endTime
         center.add(startTime);
 
         endTimeL = new JLabel("End Time 00:00 am/pm format");
@@ -840,12 +851,14 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         center.add(endTimeL);
 
         endTime = new JTextField();
+        endTime.addActionListener(this);//todo endTime to venueList and enable
         endTime.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(endTime);
 
         venueList  = new JComboBox<>();
         venueList.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(venueList);
+        venueList.addActionListener(this);//todo venueList to showPrice
 
         try {
             ResultSet eventResult = giveQuery("SELECT CONCAT(id , \".\", name, \" max \", capacity, ' $', price)," +
@@ -879,6 +892,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         showPrice = new JTextField(20);
         showPrice.setFont(new Font("Serif", Font.BOLD, 20));
         south.add(showPrice);
+        showPrice.addActionListener(this);//todo confirmBooking
 
         confirmBooking = new JButton("Confirm");
         //todo connect the confirm button
@@ -992,6 +1006,28 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
             staffSignInPasswd.requestFocus();
         } else if (e.getSource() == staffSignInPasswd) {
             pressedStaffSignIn();
+        } else if (e.getSource() == eventNameT) {
+            guestNo.requestFocus();
+        } else if (e.getSource() == guestNo) {
+            eventDate.requestFocus();
+        } else if (e.getSource() == eventDate) {
+            startTime.requestFocus();
+        } else if (e.getSource() == startTime) {
+            endTime.requestFocus();
+        } else if (e.getSource() == endTime) {
+            venueList.requestFocus();
+        } else if (e.getSource() == showPrice) {
+            pressedConfirmBooking();
+        } else if (e.getSource() == signUpName) {
+            tellNoo1.requestFocus();
+        } else if (e.getSource() == tellNoo1) {
+            tellNoo2.requestFocus();
+        } else if (e.getSource() == tellNoo2) {
+            signUpPasswd.requestFocus();
+        } else if (e.getSource() == signUpPasswd) {
+            confirm.requestFocus();
+        } else if (e.getSource() == confirm) {
+            pressedSignUp();
         }
     }
 
@@ -1225,7 +1261,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                     if (checkSpace(signUpName.getText())) {
                         int tempTell1 = Integer.parseInt(tellNoo1.getText()),
                                 tempTell2 = Integer.parseInt(tellNoo2.getText());
-                        if (!(tellNoo1.getText().length() > 9 || tellNoo2.getText().length() > 9)) {
+                        if ((tellNoo1.getText().length() > 9 || tellNoo2.getText().length() > 9)) {
                             String fullName = signUpName.getText();
                             String firstName = separateName(fullName).getFirst(),
                                     lastName = separateName(fullName).getLast(),
@@ -1239,7 +1275,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                                     passWord, sex);
                             customer.add();
                             messageLabel.setForeground(Color.green);
-                            messageLabel.setText("works up to this");
+                            messageLabel.setText("Successfully signedUp");
 
                         } else messageLabel.setText("contact info should be filled");
                     } else {
