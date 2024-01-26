@@ -20,9 +20,7 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="48b8a767-beec-42ef-a216-d36beb5be28c" object-ref="schemas/event_organizer/tables/event" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="48b8a767-beec-42ef-a216-d36beb5be28c" />

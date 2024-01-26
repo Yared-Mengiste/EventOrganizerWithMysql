@@ -36,7 +36,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
     protected JPasswordField signInPasswd;
     protected JLabel nameL,signInL, signInPasswdL;
     protected JMenuBar menuBar;
-    protected JMenuItem signInStaff, signInCustomer;
+    protected JMenuItem signInStaff, signInCustomer, about;
     protected JTextField staffName;
     protected JPasswordField staffSignInPasswd;
     protected JLabel staffNameL, staffSignInL, staffSignInPasswdL;
@@ -85,19 +85,6 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
     }
 
     /**
-     * removeAllComponents is used for removing all components from a given component you put in
-     * @param container is an object of the class that is used to get a container like jFrame, JPanel
-     */
-    protected static void removeAllComponents(Container container) {
-        Component[] components = container.getComponents();
-        for (Component component : components) {
-            container.remove(component);
-        }
-        container.revalidate();
-        container.repaint();
-    }
-
-    /**
      * this is a method that is used to show signIn page of the customer side
      */
     protected void signInGui(){
@@ -117,14 +104,17 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         menuBar = new JMenuBar();
         menuBar.setBackground(Color.orange);
         JMenu staffSignIn = new JMenu("Sign IN");
+        menuBar.add(staffSignIn);
 
         signInStaff = new JMenuItem("Staff SignIn");
         signInStaff.addActionListener(this);
         staffSignIn.add(signInStaff);
 
-        JMenu about = new JMenu("About");
-        menuBar.add(staffSignIn);
-        menuBar.add(about);
+        about = new JMenuItem("About");
+        about.addActionListener(this);
+        JMenu aboutInfo = new JMenu("About");
+        menuBar.add(aboutInfo);
+        aboutInfo.add(about);
         setJMenuBar(menuBar);
 
         //signIn JPanel
@@ -223,6 +213,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         staffSignIn.add(signInCustomer);
 
         JMenu about = new JMenu("About");
+        about.add(this.about);
         menuBar.add(staffSignIn);
         menuBar.add(about);
         setJMenuBar(menuBar);
@@ -293,6 +284,30 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         setVisible(true);
     }
 
+    protected void pressedAbout(){
+        beginning();
+        eventTypeChoice = new JLabel("Event Organizing App");
+        eventTypeChoice.setForeground(Color.orange);
+        eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
+        north.add(eventTypeChoice);
+
+        center.setLayout(new GridBagLayout());
+        JTextArea aboutInfo = new JTextArea("The purpose of this project is to develop\n and implement an event organizing" +
+                " database system\n that can provide user-friendly solution that can facilitate\n and improve event organizing." +
+                " The system will\n allow users to create and manage events, book and allocate venues,\n register and communicate" +
+                " with attendees, and perform\n other related tasks. The system will aim to improve the \nefficiency, reduce the" +
+                " costs, and enhance\n the quality of event organizing.The project will address the current\n problems and " +
+                "limitations of existing event\n organizing methods or systems, such as manual processes,\n paper-based records," +
+                " lack of integration\n, and so on. These problems can cause errors, delays, waste,\n and dissatisfaction " +
+                "among the users and the stakeholders.");
+        aboutInfo.setFont(new Font("Serif", Font.PLAIN, 18));
+        aboutInfo.setBackground(Color.orange);
+        aboutInfo.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        aboutInfo.setForeground(new Color(101, 1, 1, 255));
+        center.add(new JScrollPane(aboutInfo));
+        setVisible(true);
+    }
+
     protected void signUpGui(){
         removeAllComponents();
         setVisible(false);
@@ -312,6 +327,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         staffSignIn.add(signInCustomer);
 
         JMenu about = new JMenu("About");
+        about.add(this.about);
         menuBar.add(staffSignIn);
         menuBar.add(about);
         setJMenuBar(menuBar);
@@ -415,8 +431,6 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         female.setBackground(Color.orange);
         constraint = frameConstraint(1,12, 1, 1, 10);
         signInContainer.add(female, constraint);
-
-
 
         messageLabel = new JLabel("");
         messageLabel.setForeground(Color.RED);
@@ -525,7 +539,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         center.add(getStaffPosition);
 
         JLabel staffSalary, getStaffSalary;
-        staffSalary = new JLabel("Gender ");
+        staffSalary = new JLabel("Salary ");
         staffSalary.setForeground(new Color(101, 1, 1, 255));
         staffSalary.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(staffSalary);
@@ -577,6 +591,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         gotoStaffFirst = new JButton("Back");
         gotoStaffFirst.setFont(new Font("Serif", Font.PLAIN, 15));
         gotoStaffFirst.setBackground(new Color(12,100, 255));
+        gotoStaffFirst.addActionListener(this);
         south.add(gotoStaffFirst);
         gotoStaffFirst.setFocusable(false);
 
@@ -594,7 +609,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
         north.add(eventTypeChoice);
 
-        assignedWorks = new JLabel("  1. View Assigned Word ");
+        assignedWorks = new JLabel("  1. View Assigned Work ");
         assignedWorks.setFont(new Font("Serif", Font.PLAIN, 40));
         assignedWorks.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
         assignedWorks.setBackground(Color.orange);
@@ -725,7 +740,6 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
 
     protected   void assignedTask(){
         beginning();
-
         south.setLayout(new FlowLayout(FlowLayout.TRAILING, 20,20));
         center.setLayout(new GridLayout(1,1, 20,0));
 
@@ -758,7 +772,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
     protected  void showBookedEvents(){
         beginning();
 
-        center.setLayout(new GridLayout(2,1));
+        center.setLayout(new GridLayout(2,1, 20, 10));
 
         eventTypeChoice = new JLabel("Events Information");
         eventTypeChoice.setForeground(Color.orange);
@@ -796,7 +810,8 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         beginning();
 
         north.setLayout(new FlowLayout(FlowLayout.TRAILING, 300, 10));
-        center.setLayout(new GridLayout(11,1));
+        center.setLayout(new GridLayout(11,1, 0,10));
+        center.setBorder(BorderFactory.createLineBorder(Color.orange, 10));
 
         eventTypeChoice = new JLabel("Fill The Form");
         eventTypeChoice.setForeground(Color.orange);
@@ -1028,6 +1043,8 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
             confirm.requestFocus();
         } else if (e.getSource() == confirm) {
             pressedSignUp();
+        } else if (e.getSource() == about) {
+            pressedAbout();
         }
     }
 
@@ -1261,7 +1278,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                     if (checkSpace(signUpName.getText())) {
                         int tempTell1 = Integer.parseInt(tellNoo1.getText()),
                                 tempTell2 = Integer.parseInt(tellNoo2.getText());
-                        if ((tellNoo1.getText().length() > 9 || tellNoo2.getText().length() > 9)) {
+                        if ((tellNoo1.getText().length() > 9 && tellNoo2.getText().length() > 9)) {
                             String fullName = signUpName.getText();
                             String firstName = separateName(fullName).getFirst(),
                                     lastName = separateName(fullName).getLast(),
@@ -1271,13 +1288,24 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                             if (male.isSelected())
                                 sex = "M";
                             else sex = "F";
-                            customer = new Customer(firstName, lastName, tellNo1, tellNo2, dataBaseName, new String(signUpPasswd.getPassword()),
-                                    passWord, sex);
-                            customer.add();
-                            messageLabel.setForeground(Color.green);
-                            messageLabel.setText("Successfully signedUp");
+                            try {
+                                int count = 0;
+                              ResultSet  resultSet = Customer.getCustomer(firstName,lastName,
+                                      String.valueOf(signUpPasswd.getPassword()), dataBaseName, passWord);
+                                if (resultSet.next()) {
+                                    messageLabel.setText("There is already an account by that name!!");
+                                }else {
+                                    customer = new Customer(firstName, lastName, tellNo1, tellNo2, dataBaseName,
+                                            new String(signUpPasswd.getPassword()), passWord, sex);
+                                    customer.add();
+                                    messageLabel.setForeground(Color.green);
+                                    messageLabel.setText("Successfully signedUp");
+                                }
+                            }catch(SQLException e1){
+                                e1.printStackTrace();
+                            }
 
-                        } else messageLabel.setText("contact info should be filled");
+                        } else messageLabel.setText("contact info should be correctly filled!");
                     } else {
                         messageLabel.setForeground(Color.red);
                         messageLabel.setText("Name is up to father name!!");
@@ -1291,7 +1319,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                 messageLabel.setText("confirm and password aren't equal");
             }
         }catch (NumberFormatException e1){
-            messageLabel.setText("Contact info can only have numbers");
+            messageLabel.setText("Contact info should be filled correctly");
         }
     }
 

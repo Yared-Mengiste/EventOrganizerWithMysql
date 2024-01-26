@@ -11,7 +11,7 @@ public class Guest extends Person{
      */
     public Guest(String firstName, String lastName, String databaseName
             ,String password) {
-        super(firstName, lastName, "0", "0", databaseName,"", password);
+        super(firstName, lastName, null, null, databaseName,null, password);
     }
     public void add() {
         try {

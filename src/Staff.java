@@ -14,7 +14,7 @@ public class Staff extends Person {
         super(firstName, lastName, phoneNo1, phoneNo2, databaseName, sex, password);
 
         this.DOB = DOB;
-        appointed_date = appointedDate;
+        this.appointed_date = appointedDate;
         this.supervisorId = supervisorId;
         this.pwd = pwd;
         this.positionId = positionId;

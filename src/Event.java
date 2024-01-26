@@ -15,20 +15,6 @@ public class Event extends MySqlConnector{
     public Event(String databaseName, String password){
         super(databaseName, password);
     }
-    public Event( String eventName, int typeId, int venueId, String eventDate,
-                 String startTime, String endTime, int customerId, String databaseName, String password, int guests,
-                 double eventCost) {
-        super(databaseName, password);
-        this.guests = guests;
-        this.eventName = eventName;
-        this.typeId = typeId;
-        this.venueId = venueId;
-        this.eventDate = eventDate;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.customerId = customerId;
-        this.eventCost = eventCost;
-    }
 
     public int getGuests() {
         return guests;
