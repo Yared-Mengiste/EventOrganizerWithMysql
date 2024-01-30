@@ -1591,9 +1591,11 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                                 System.out.println(guestList);
 
                                 try {
-                                    resultSet = giveQuery("select id from guest order by id desc limit 1");
-                                    resultSet.next();
-                                    newGuest.setId(resultSet.getInt("id"));
+                                    if(newGuest.getId() == 0) {
+                                        resultSet = giveQuery("select id from guest order by id desc limit 1");
+                                        resultSet.next();
+                                        newGuest.setId(resultSet.getInt("id"));
+                                    }
                                     EventGuest.addEventGuest(givenEventId, newGuest.getId(),dataBaseName,passWord);
                                     showTable("select concat(first_name, ' ', last_name) as 'Guest Name' FROM event JOIN" +
                                             " eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +

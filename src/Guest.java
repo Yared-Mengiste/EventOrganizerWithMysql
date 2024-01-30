@@ -17,21 +17,36 @@ public class Guest extends Person{
         super(firstName, lastName, null, null, databaseName,null, password);
     }
     public void add() {
-        try {
-            connect();
-            pst = conn.prepareStatement("insert into Guest (first_name,last_name) values(?,?)");
-            pst.setString(1, firstName);
-            pst.setString(2, lastName);
 
-            pst.executeUpdate();
-            System.out.println("Added to Guests Successfully");
-            conn.close();
-        } catch (SQLException e1) {
-            e1.printStackTrace();
-            System.out.println("error adding to guests");
-        }
+            connect();
+            try {
+                ResultSet resultSet = giveQuery("select * from guest where first_name = '" + firstName + "' and " +
+                        "last_name ='" + lastName + "'");
+                if (resultSet.next()) {
+                    id = resultSet.getInt("id");
+                    System.out.println(id);
+                    System.out.println("already there is guest");
+                }else {
+                    try {
+                        pst = conn.prepareStatement("insert into Guest (first_name,last_name) values(?,?)");
+                        pst.setString(1, firstName);
+                        pst.setString(2, lastName);
+
+                        pst.executeUpdate();
+                        id = 0;
+                        System.out.println("Added to Guests Successfully");
+                        conn.close();
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                        System.out.println("error adding to guests");
+                    }
+                }
+            } catch (SQLException e) {
+                System.out.println("found a guest");
+            }
+
     }
-    public void getGuestId() {
+        public void getGuestId() {
         try {
             connect();
             pst = conn.prepareStatement("select * from guest where first_name = ? and last_name = ?");
