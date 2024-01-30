@@ -1,3 +1,6 @@
+import com.mysql.cj.protocol.Resultset;
+
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 
@@ -26,6 +29,24 @@ public class Guest extends Person{
         } catch (SQLException e1) {
             e1.printStackTrace();
             System.out.println("error adding to guests");
+        }
+    }
+    public void getGuestId() {
+        try {
+            connect();
+            pst = conn.prepareStatement("select * from guest where first_name = ? and last_name = ?");
+            pst.setString(1, firstName);
+            pst.setString(2, lastName);
+
+            ResultSet resultset = pst.executeQuery();
+            while(resultset.next()){
+                id = resultset.getInt("id");
+            }
+
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+            System.out.println("error selecting guest");
+            id = 0;
         }
     }
 }

@@ -56,6 +56,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
     protected NumberFormat currency = NumberFormat.getCurrencyInstance(Locale.US);
     protected int givenEventId = 0, maxGuests , guestCount;
     protected String date;
+    protected JButton removeGuest;
 
     /**
      * this constructor accepts
@@ -657,7 +658,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         view.addMouseListener(this);
         center.add(view);
 
-        addGuests = new JLabel("  3. Add Guests");
+        addGuests = new JLabel("  3. Add or Remove Guests");
         addGuests.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
         addGuests.setFont(new Font("Serif", Font.PLAIN, 40));
         addGuests.setBackground(Color.orange);
@@ -680,7 +681,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         center.setLayout(new GridLayout(1,1, 20,10));
         north.setLayout(new FlowLayout(FlowLayout.TRAILING, 30, 10));
 
-        eventTypeChoice = new JLabel("Add Guests");
+        eventTypeChoice = new JLabel("Add or Remove Guests");
         eventTypeChoice.setForeground(Color.orange);
         eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
         north.add(eventTypeChoice);
@@ -727,6 +728,13 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         south.add(enterGuestName);
         enterGuestName.addActionListener(this);
         enterGuestName.setFocusable(false);
+
+        removeGuest = new JButton("Remove");
+        removeGuest.setBackground(new Color(12,100, 255));
+        removeGuest.setEnabled(false);
+        south.add(removeGuest);
+        removeGuest.addActionListener(this);
+        removeGuest.setFocusable(false);
 
         backFirst = new JButton("Back");
         backFirst.setFont(new Font("Serif", Font.PLAIN, 15));
@@ -1045,6 +1053,8 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
             pressedSignUp();
         } else if (e.getSource() == about) {
             pressedAbout();
+        } else if (e.getSource() == removeGuest) {
+            pressedRemoveGuest();
         }
     }
 
@@ -1182,7 +1192,38 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                 return day;
             return false;
     }
-    private void pressedSignIn(){
+
+    protected void pressedRemoveGuest(){
+        String fullName = inputFullName.getText();
+        if(!fullName.isBlank()){
+            if(checkSpace(fullName)){
+                    ResultSet resultSet ;
+                    try {
+                            String firstName, lastName;
+                            firstName = separateName(fullName).getFirst();
+                            lastName = separateName(fullName).getLast();
+                            if (!guestList.contains(firstName + " " + lastName))
+                                messageLabel.setText("No Guest by that name to remove");
+                            else {
+                                System.out.println(guestList);
+                                    Guest newGuest = new Guest(firstName, lastName, dataBaseName,passWord);
+                                    newGuest.getGuestId();
+                                System.out.println(newGuest.getId());
+                                    if(newGuest.getId() != 0) {
+                                        EventGuest.removeEventGuest(givenEventId, newGuest.getId(), dataBaseName, passWord);
+                                        showTable("select concat(first_name, ' ', last_name) as 'Guest Name' FROM event JOIN" +
+                                                " eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
+                                                "WHERE customer_id = " + customer.getId() + " and event_id = " + givenEventId, showGuests);
+                                        guestList.remove(firstName +" "+ lastName);
+                                    } else messageLabel.setText("failed to remove guest");
+                            }
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+            }else messageLabel.setText("Full name is up to father name!!");
+        }else messageLabel.setText("First Add To Full Name!!");
+    }
+    protected void pressedSignIn(){
         String fullName, fName, lName, userPassword, phoneNo1, phoneNo2, sex;
         int id;
         ResultSet resultSet;
@@ -1511,6 +1552,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                                         System.out.println("failed to add to the guestList!");
                                     }
                                     enterGuestName.setEnabled(true);
+                                    removeGuest.setEnabled(true);
                                 } else messageLabel.setText("Guests are fully added");
                             } catch (SQLException e1) {
                                 e1.printStackTrace();

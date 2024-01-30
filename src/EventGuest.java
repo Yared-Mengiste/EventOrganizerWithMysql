@@ -28,4 +28,19 @@ public class EventGuest extends MySqlConnector{
        }
 
    }
+
+    public static void removeEventGuest(int event_id, int guest_id, String dataBaseName, String password){
+        try{
+            MySqlConnector m = new MySqlConnector(dataBaseName, password);
+            m.connect();
+            m.pst = m.conn.prepareStatement("delete from eventGuests where event_id = ? and guest_id = ?");
+            m.pst.setInt(1, event_id);
+            m.pst.setInt(2, guest_id);
+            m.pst.executeUpdate();
+            System.out.println("successfully removed from eventGuest");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+    }
 }
