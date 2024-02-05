@@ -1,0 +1,101 @@
+CREATE TABLE staffPosition (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    position VARCHAR(100) not NULL,
+    salary DECIMAL(10, 2) not null
+);
+
+CREATE TABLE Staff (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) not null,
+    last_name VARCHAR(100) not null,
+    sex CHAR(1) not null,
+    position_id INT not null,
+    DOB DATE not null,
+    supervisor_id INT not null,
+    password VARCHAR(100) not null,
+    tellNo1 VARCHAR(20) not null,
+    tellNo2 VARCHAR(20) not null,
+    event_work int DEFAULT(0),
+    apointed_date date not NULL,
+    FOREIGN KEY (position_id) REFERENCES staffPosition(id),
+    FOREIGN KEY (supervisor_id) REFERENCES Staff(id)
+);
+
+CREATE TABLE Customer (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) not null,
+    last_name VARCHAR(100) not null,
+    tellNo1 VARCHAR(20) not null,
+    tellNo2 VARCHAR(20),
+    password VARCHAR(100) not null,
+    sex VARCHAR(1) not null
+);
+
+CREATE TABLE Venue (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) not null,
+    capacity INT not null,
+    state VARCHAR(100) not Null,
+    city VARCHAR(100) not null,
+    price DECIMAL(10, 2) not null,
+    street VARCHAR(100) 
+);
+
+CREATE TABLE Guest (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) not null,
+    last_name VARCHAR(100) not null
+);
+
+CREATE TABLE EventType (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type_name VARCHAR(100) not null,
+    cost_per_person DECIMAL(10, 2) not null
+);
+
+CREATE TABLE Event (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_name VARCHAR(100),
+    type_id INT not null,
+    venue_id INT not null,
+    event_date DATE not null,
+    start_time TIME not null,
+    end_time TIME not null,
+    customer_id INT not null,
+    guest int not null,
+    event_cost decimal(10,2) not null,
+    FOREIGN KEY (venue_id) REFERENCES Venue(id),
+    FOREIGN KEY (type_id) REFERENCES EventType(id),
+    FOREIGN KEY (customer_id) REFERENCES Customer(id)
+);
+
+CREATE TABLE EventGuests (
+    event_id INT,
+    guest_id INT,
+    PRIMARY KEY (event_id, guest_id),
+    FOREIGN KEY (event_id) REFERENCES Event(id),
+    FOREIGN KEY (guest_id) REFERENCES Guest(id)
+);
+
+CREATE TABLE EventStaff (
+    event_id INT,
+    staff_id INT,
+    PRIMARY KEY (event_id, staff_id),
+    FOREIGN KEY (event_id) REFERENCES Event(id),
+    FOREIGN KEY (staff_id) REFERENCES Staff(id)
+);
+INSERT into staffposition(id,position, salary)
+VALUES (1,'Wedding Planner', 50000),
+(2,'Birthday Planner', 48000),
+(3,'Graduation Planner', 47000),
+(4,'Event Manager', 55000),
+(5,'Human Resource', 60000),
+(6,'Supervisor', 65000),
+(7,'Waiter', 30000),
+(8,'Security', 40000),
+(9,'Valet', 35000);
+
+INSERT into eventtype(id, type_name, cost_per_person) 
+VALUES(1, "WEDDING", 500),
+      (2, "BIRTHDAY", 400),
+      (3, "GRADUATION", 350);
