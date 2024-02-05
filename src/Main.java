@@ -51,12 +51,17 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
     protected JLabel assignedWorks, viewInfo, staffSignOut;
     protected ArrayList<String> guestList;
     protected JButton gotoStaffFirst;
-    protected JLabel staffFullNameInfo, staffGender, staffSupervisor, staffPosition, staffAppointedDate,
-            getStaffFullNameInfo, getStaffGender,getStaffPosition,getStaffAppointedDate,getStaffSupervisor;
+    protected JLabel staffFullNameInfo,staffGender, staffSupervisor, staffPosition, staffAppointedDate,
+           getStaffPosition,getStaffAppointedDate,getStaffSupervisor;
     protected NumberFormat currency = NumberFormat.getCurrencyInstance(Locale.US);
     protected int givenEventId = 0, maxGuests , guestCount;
     protected String date;
     protected JButton removeGuest;
+    protected JButton updateProfile;
+    protected JTextField staffPassword, getStaffFullNameInfo, getStaffGender;
+    protected JLabel staffPasswordL;
+    protected JLabel userInfoView;
+    protected JButton updateCustomerProfile;
 
     /**
      * this constructor accepts
@@ -484,9 +489,9 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
 
     }
 
-    protected  void staffInformationView(){
+    protected void userInformationView(){
         beginning();
-        center.setLayout(new GridLayout(6,2, 20,0));
+        center.setLayout(new GridLayout(3,2, 20,0));
         north.setLayout(new FlowLayout(FlowLayout.TRAILING, 300, 10));
         south.setLayout(new FlowLayout(FlowLayout.TRAILING, 20,20));
 
@@ -500,7 +505,8 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         staffFullNameInfo.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(staffFullNameInfo);
 
-        getStaffFullNameInfo = new JLabel(staff.getFirstName() + " "+ staff.getLastName());
+        getStaffFullNameInfo = new JTextField(customer.getFirstName() + " "+ customer.getLastName());
+        getStaffFullNameInfo.setBackground(Color.orange);
         getStaffFullNameInfo.setForeground(new Color(101, 1, 1, 255));
         getStaffFullNameInfo.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(getStaffFullNameInfo);
@@ -510,7 +516,78 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         staffGender.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(staffGender);
 
-        getStaffGender = new JLabel(staff.getSex());
+        getStaffGender = new JTextField(customer.getSex());
+        getStaffGender.setBackground(Color.orange);
+        getStaffGender.setForeground(new Color(101, 1, 1, 255));
+        getStaffGender.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(getStaffGender);
+
+        staffPasswordL = new JLabel("Password  ");
+        staffPasswordL.setForeground(new Color(101, 1, 1, 255));
+        staffPasswordL.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(staffPasswordL);
+
+        staffPassword = new JTextField(customer.getPwd());
+        staffPassword.setForeground(new Color(101, 1, 1, 255));
+        staffPassword.setFont(new Font("Serif", Font.PLAIN, 20));
+        staffPassword.setBackground(Color.orange);
+        center.add(staffPassword);
+
+        current_date = new JLabel(date);
+        current_date.setFont(new Font("Serif", Font.PLAIN, 15));
+        current_date.setForeground(Color.orange);
+        north.add(current_date);
+
+        updateCustomerProfile = new JButton("Update");
+        updateCustomerProfile.setFont(new Font("Serif", Font.PLAIN, 15));
+        updateCustomerProfile.setBackground(new Color(12,100, 255));
+        updateCustomerProfile.addActionListener(this);
+        south.add(updateCustomerProfile);
+        updateCustomerProfile.setFocusable(false);
+
+        messageLabel = new JLabel("");
+        messageLabel.setForeground(Color.GREEN);
+        west.add(messageLabel);
+
+        backFirst = new JButton("Back");
+        backFirst.setFont(new Font("Serif", Font.PLAIN, 15));
+        backFirst.setBackground(new Color(12,100, 255));
+        backFirst.addActionListener(this);
+        south.add(backFirst);
+        backFirst.setFocusable(false);
+
+        setVisible(true);
+    }
+
+    protected  void staffInformationView(){
+        beginning();
+        center.setLayout(new GridLayout(7,2, 20,0));
+        north.setLayout(new FlowLayout(FlowLayout.TRAILING, 300, 10));
+        south.setLayout(new FlowLayout(FlowLayout.TRAILING, 20,20));
+
+        eventTypeChoice = new JLabel("Your Information");
+        eventTypeChoice.setForeground(Color.orange);
+        eventTypeChoice.setFont(new Font("Serif", Font.PLAIN, 50));
+        north.add(eventTypeChoice);
+
+        staffFullNameInfo = new JLabel("Name ");
+        staffFullNameInfo.setForeground(new Color(101, 1, 1, 255));
+        staffFullNameInfo.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(staffFullNameInfo);
+
+        getStaffFullNameInfo = new JTextField(staff.getFirstName() + " "+ staff.getLastName());
+        getStaffFullNameInfo.setBackground(Color.orange);
+        getStaffFullNameInfo.setForeground(new Color(101, 1, 1, 255));
+        getStaffFullNameInfo.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(getStaffFullNameInfo);
+
+        staffGender = new JLabel("Gender ");
+        staffGender.setForeground(new Color(101, 1, 1, 255));
+        staffGender.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(staffGender);
+
+        getStaffGender = new JTextField(staff.getSex());
+        getStaffGender.setBackground(Color.orange);
         getStaffGender.setForeground(new Color(101, 1, 1, 255));
         getStaffGender.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(getStaffGender);
@@ -581,13 +658,32 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         getStaffAppointedDate.setFont(new Font("Serif", Font.PLAIN, 20));
         center.add(getStaffAppointedDate);
 
+        staffPasswordL = new JLabel("Password  ");
+        staffPasswordL.setForeground(new Color(101, 1, 1, 255));
+        staffPasswordL.setFont(new Font("Serif", Font.PLAIN, 20));
+        center.add(staffPasswordL);
 
-
+        staffPassword = new JTextField(staff.getPwd());
+        staffPassword.setForeground(new Color(101, 1, 1, 255));
+        staffPassword.setFont(new Font("Serif", Font.PLAIN, 20));
+        staffPassword.setBackground(Color.orange);
+        center.add(staffPassword);
 
         current_date = new JLabel(date);
         current_date.setFont(new Font("Serif", Font.PLAIN, 15));
         current_date.setForeground(Color.orange);
         north.add(current_date);
+
+        updateProfile = new JButton("Update");
+        updateProfile.setFont(new Font("Serif", Font.PLAIN, 15));
+        updateProfile.setBackground(new Color(12,100, 255));
+        updateProfile.addActionListener(this);
+        south.add(updateProfile);
+        updateProfile.setFocusable(false);
+
+        messageLabel = new JLabel("");
+        messageLabel.setForeground(Color.GREEN);
+        west.add(messageLabel);
 
         gotoStaffFirst = new JButton("Back");
         gotoStaffFirst.setFont(new Font("Serif", Font.PLAIN, 15));
@@ -617,7 +713,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         assignedWorks.addMouseListener(this);
         center.add(assignedWorks);
 
-        viewInfo = new JLabel("  2. View Personal Info ");
+        viewInfo = new JLabel("  2. View or Update Personal Info ");
         viewInfo.setFont(new Font("Serif", Font.PLAIN, 40));
         viewInfo.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
         viewInfo.setBackground(Color.orange);
@@ -637,7 +733,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
     protected void userOption(){
         beginning();
 
-        center.setLayout(new GridLayout(4,1));
+        center.setLayout(new GridLayout(5,1));
 
         userOptionTitle = new JLabel("Welcome "+ customer.getFirstName() + " " + customer.getLastName() );
         userOptionTitle.setForeground(Color.orange);
@@ -665,8 +761,15 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         addGuests.addMouseListener(this);
         center.add(addGuests);
 
+        userInfoView = new JLabel("  4. User Info view and Update");
+        userInfoView.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
+        userInfoView.setFont(new Font("Serif", Font.PLAIN, 40));
+        userInfoView.setBackground(Color.orange);
+        userInfoView.addMouseListener(this);
+        center.add(userInfoView);
 
-        signOut = new JLabel("  4. SignOut");
+
+        signOut = new JLabel("  5. SignOut");
         signOut.setBorder(BorderFactory.createDashedBorder(Color.red, 1f, 3f, 1f, true));
         signOut.setFont(new Font("Serif", Font.PLAIN, 40));
         signOut.setBackground(Color.orange);
@@ -1055,6 +1158,10 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
             pressedAbout();
         } else if (e.getSource() == removeGuest) {
             pressedRemoveGuest();
+        } else if (e.getSource() == updateProfile) {
+            pressedStaffUpdate();
+        } else if (e.getSource() == updateCustomerProfile) {
+            pressedUpdateCustomerInfo();
         }
     }
 
@@ -1169,6 +1276,8 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
             staffInformationView();
         } else if (e.getSource() == staffSignOut) {
             staffSignInGui();
+        } else if (e.getSource() == userInfoView) {
+            userInformationView();
         }
     }
 
@@ -1253,7 +1362,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                         phoneNo1 = resultSet.getString("tellNo1");
                         phoneNo2 = resultSet.getString("tellNo2");
                         id = resultSet.getInt("id");
-                        customer = new Customer(fName, lName, phoneNo1, phoneNo2, dataBaseName, passWord, userPassword, sex);
+                        customer = new Customer(fName, lName, phoneNo1, phoneNo2, dataBaseName, userPassword,passWord, sex);
                         customer.setId(id);
                         userOption();
                     }
@@ -1362,6 +1471,50 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
         }catch (NumberFormatException e1){
             messageLabel.setText("Contact info should be filled correctly");
         }
+    }
+    protected void pressedUpdateCustomerInfo(){
+        if(checkSpace(getStaffFullNameInfo.getText())){
+            if(staffPassword.getText().length() > 3){
+                if(getStaffGender.getText().length() == 1 && (getStaffGender.getText().equalsIgnoreCase("M"))
+                        || getStaffGender.getText().equalsIgnoreCase("F") ){
+                    String firstName = separateName(getStaffFullNameInfo.getText()).getFirst();
+                    String lastName = separateName(getStaffFullNameInfo.getText()).getLast();
+                    String gender = getStaffGender.getText().toUpperCase();
+                    String password = staffPassword.getText();
+                    customer.setFirstName(firstName);
+                    customer.setLastName(lastName);
+                    customer.setSex(gender);
+                    customer.setPwd(password);
+                    customer.updateCustomer();
+                    userInformationView();
+                    messageLabel.setText("successfully updated");
+                }else messageLabel.setText("gender isn't correctly formatted");
+            }else messageLabel.setText("password should be > 3");
+
+        }else messageLabel.setText("name includes father's name");
+    }
+
+
+    protected void pressedStaffUpdate(){
+        if(checkSpace(getStaffFullNameInfo.getText())){
+            if(staffPassword.getText().length() > 3){
+                if(getStaffGender.getText().length() == 1 && (getStaffGender.getText().equalsIgnoreCase("M"))
+               || getStaffGender.getText().equalsIgnoreCase("F") ){
+                    String firstName = separateName(getStaffFullNameInfo.getText()).getFirst();
+                    String lastName = separateName(getStaffFullNameInfo.getText()).getLast();
+                    String gender = getStaffGender.getText().toUpperCase();
+                    String password = staffPassword.getText();
+                    staff.setFirstName(firstName);
+                    staff.setLastName(lastName);
+                    staff.setSex(gender);
+                    staff.setPwd(password);
+                    staff.updateStaff();
+                    staffInformationView();
+                    messageLabel.setText("successfully updated");
+                }else messageLabel.setText("gender isn't correctly formatted");
+            }else messageLabel.setText("password should be > 3");
+
+        }else messageLabel.setText("name includes father's name");
     }
 
     public void pressedFinishBooking() {
@@ -1481,6 +1634,8 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                                 pst.executeUpdate();
                                 System.out.println("Recorded is added to eventStaff");
                                 conn.close();
+                                messageLabel.setText("you have  Successfully Booked ");
+                                showPrice.setText(currency.format(givenMoney - event.getEventCost()) + " return");
                             } catch (SQLException e1) {
                                 e1.printStackTrace();
                             }
@@ -1488,16 +1643,7 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                             e1.printStackTrace();
                         }
                         //todo change event_work by one
-                        try {
-                            connect();
-                            pst = conn.prepareStatement("update staff set event_work = event_work + 1 where staff_id = "
-                                    + staff_id);
-                            conn.close();
-                            messageLabel.setText("you have  Successfully Booked ");
-                            showPrice.setText(currency.format(givenMoney - event.getEventCost()) + " return");
-                        } catch (SQLException e2) {
-                            e2.printStackTrace();
-                        }
+
                     } else messageLabel.setText("The Date is Booked!!");
                 } catch (SQLException e1) {
                     e1.printStackTrace();
@@ -1599,7 +1745,8 @@ public class Main extends MySqlConnector implements ActionListener , MouseListen
                                     EventGuest.addEventGuest(givenEventId, newGuest.getId(),dataBaseName,passWord);
                                     showTable("select concat(first_name, ' ', last_name) as 'Guest Name' FROM event JOIN" +
                                             " eventGuests on event.id = event_id JOIN guest on guest_id = guest.id " +
-                                            "WHERE customer_id = "+ customer.getId() + " and event_id = " + givenEventId, showGuests);
+                                            "WHERE customer_id = "+ customer.getId() + " and event_id = " + givenEventId
+                                            , showGuests);
                                 }catch (SQLException e1){
                                     e1.printStackTrace();
                                     System.out.println("can't get id!!");

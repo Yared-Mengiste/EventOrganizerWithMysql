@@ -79,6 +79,25 @@ public class Staff extends Person {
             System.out.println("Error adding staff");
         }
     }
+
+    public void updateStaff(){
+        try {
+            connect();
+            pst = conn.prepareStatement("UPDATE staff SET first_name = ?, last_name = ?, sex = ?, password = ? " +
+                    "WHERE id = ?");
+            pst.setString(1, firstName);
+            pst.setString(2,lastName);
+            pst.setString(3,sex);
+            pst.setString(4,pwd);
+            pst.setInt(5,id);
+            pst.executeUpdate();
+            conn.close();
+            pst.close();
+            System.out.println("successfully updated");
+        }catch (SQLException e){
+            System.out.println("update doesn't work");
+        }
+    }
     public void setDOB(String DOB) {
         this.DOB = DOB;
     }
