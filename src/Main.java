@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.sql.*;
 
 public class Main {
     public static void main(String[] arr){
@@ -7,6 +8,5 @@ public class Main {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
